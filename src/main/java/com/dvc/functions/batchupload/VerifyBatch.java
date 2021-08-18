@@ -99,25 +99,29 @@ public class VerifyBatch {
                 } catch (Exception e) {
                     break;
                 }
-                String serialno = "0";
-                if (str.split("\\.").length > 0) {
-                    serialno = str.split("\\.")[0];
+                try {
+                    String serialno = "0";
+                    if (str.split("\\.").length > 0) {
+                        serialno = str.split("\\.")[0];
+                    }
+                    m.put("mobilephone", ValidateBatchUtils.normalizePhone((String) m.get("mobilephone")));
+                    m.put("serialno", serialno);
+                    m.put("syskey", KeyGenerator.generateSyskey());
+                    m.put("createddate", now);
+                    m.put("modifieddate", now);
+                    m.put("recordstatus", 0);
+                    m.put("vaccinationstatus", 0);
+                    m.put("piref", ""); // recheck
+                    m.put("batchuploadsyskey", syskey);
+                    m.put("partnersyskey", batch.get("partnersyskey"));
+                    m.put("nric", m.get("nric") == null ? "" : ValidateBatchUtils.normalizeNrc((String) m.get("nric")));
+                    m.put("dob", ValidateBatchUtils.normalizeDob((String) m.get("dob")));
+                    m.put("batchrefcode", String.format("%s-%s", batch.get("batchrefcode"), serialno));
+                    context.getLogger().info(batch.get("batchrefcode") + " Reading serialno " + serialno);
+                    detaillist.add(m);
+                } catch (Exception rowe) {
+                    context.getLogger().severe(rowe.getMessage());
                 }
-                m.put("mobilephone", ValidateBatchUtils.normalizePhone((String) m.get("mobilephone")));
-                m.put("serialno", serialno);
-                m.put("syskey", KeyGenerator.generateSyskey());
-                m.put("createddate", now);
-                m.put("modifieddate", now);
-                m.put("recordstatus", 0);
-                m.put("vaccinationstatus", 0);
-                m.put("piref", ""); // recheck
-                m.put("batchuploadsyskey", syskey);
-                m.put("partnersyskey", batch.get("partnersyskey"));
-                m.put("nric", m.get("nric") == null ? "" : ValidateBatchUtils.normalizeNrc((String) m.get("nric")));
-                m.put("dob", ValidateBatchUtils.normalizeDob((String) m.get("dob")));
-                m.put("batchrefcode", String.format("%s-%s", batch.get("batchrefcode"), serialno));
-                context.getLogger().info(batch.get("batchrefcode") + " Reading serialno " + serialno);
-                detaillist.add(m);
             }
 
             new EasySql(DbFactory.getConnection()).deleteOne("BatchDetails", "batchuploadsyskey", syskey);
