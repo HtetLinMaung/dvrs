@@ -388,20 +388,6 @@ public class VerifyBatch {
             return request.createResponseBuilder(HttpStatus.OK).body(new BaseResponse()).build();
 
         } catch (Exception e) {
-            // try {
-            // Map<String, Object> args = new HashMap<>();
-            // String id = request.getQueryParameters().get("id");
-            // args.put("syskey", id);
-            // args.put("recordstatus", 500);
-            // new BatchUploadDao().updateBatch(args);
-            // } catch (SQLException e1) {
-            // context.getLogger().severe(e.getMessage());
-            // BaseResponse res = new BaseResponse();
-            // res.setRetcode(ServerStatus.SERVER_ERROR);
-            // res.setRetmessage(ServerMessage.SERVER_ERROR);
-            // return
-            // request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR).body(res).build();
-            // }
             context.getLogger().severe(e.getMessage());
             BaseResponse res = new BaseResponse();
             res.setRetcode(ServerStatus.SERVER_ERROR);
