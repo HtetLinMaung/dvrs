@@ -281,7 +281,8 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
     }
 
     public List<Map<String, Object>> getYgn1Latest() throws SQLException {
-        return getDBClient().getMany(Arrays.asList("cl.cid", "firstdosedate", "firstdosetime", "seconddosetime"),
-                "CenterLastSerials as cl left join Recipients as r on r.cid = cl.cid where cl.centerid = 'YGN1'");
+        return getDBClient().getMany(
+                Arrays.asList("cl.cid", "firstdosedate", "firstdosetime", "seconddosetime", "centername"),
+                "CenterLastSerials as cl left join Recipients as r on r.cid = cl.cid left join Centers as c on c.centerid = cl.centerid where cl.centerid = 'YGN1'");
     }
 }
