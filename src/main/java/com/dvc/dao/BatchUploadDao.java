@@ -271,7 +271,7 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                     recipient.put("partnersyskey", dto.getPartnersyskey());
                     recipient.put("voidstatus", 1);
                     if (pi.get("centerid").equals("YGN1")) {
-                        if (srno <= 6300) {
+                        if (srno <= 10500) {
                             int slot = (int) Math.ceil((double) srno / 350);
                             int day = (int) Math.ceil((double) slot / 6);
                             int timeslot = slot - ((day - 1) * 6);
@@ -310,8 +310,8 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                             recipient.put("firstdosedate", date);
                             recipient.put("firstdosetime", firstdosetime);
                             recipient.put("seconddosetime", firstdosetime);
-                        } else if (srno > 6300) {
-                            int slot = (int) Math.ceil((double) (srno - 6300) / 500);
+                        } else if (srno > 10500) {
+                            int slot = (int) Math.ceil((double) (srno - 10500) / 500);
                             int day = (int) Math.ceil((double) slot / 6);
                             int timeslot = slot - ((day - 1) * 6);
                             String firstdosetime = "";
@@ -342,7 +342,7 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                                     break;
                             }
                             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                            String date = formatter.format(LocalDate.of(2021, 8, 25).plusDays(day));
+                            String date = formatter.format(LocalDate.of(2021, 8, 27).plusDays(day));
                             // if (formatter.format(LocalDate.now()).equals("23/08/2021")) {
                             // date = formatter.format(LocalDate.now().plusDays(day));
                             // }
