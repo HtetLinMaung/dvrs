@@ -381,7 +381,6 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                     addstmt.setObject(i++, pi.get("centerid"));
                     addstmt.setString(i++, (String) pi.get("centerid") + String.format("%07d", srno));
                     addstmt.executeUpdate();
-
                 } else {
                     sql = "update CenterLastSerials set cid = ? where centerid = ?";
                     PreparedStatement updatestmt = connection.prepareStatement(sql);
