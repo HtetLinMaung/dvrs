@@ -22,7 +22,7 @@ create table BatchDetails (
     Address1 nvarchar(255),
     Address2 nvarchar(255),
     Township nvarchar(255),
-    Division nvarchar(50),
+    Division nvarchar(255),
     MobilePhone nvarchar(50),
     RegisterationStatus tinyint,
     VaccinationStatus tinyint,
