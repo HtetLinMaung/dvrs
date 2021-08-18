@@ -13,6 +13,7 @@ import com.dvc.dao.BatchUploadDao;
 import com.dvc.dao.CenterDao;
 import com.dvc.dao.PIDao;
 import com.dvc.dao.RecipientsDao;
+import com.dvc.factory.DbFactory;
 import com.dvc.middlewares.SecurityMiddleware;
 import com.dvc.models.BaseResponse;
 import com.dvc.models.BlankCardDto;
@@ -21,6 +22,7 @@ import com.dvc.models.QRYData;
 import com.dvc.models.SingleResponse;
 import com.dvc.models.TokenData;
 import com.dvc.utils.CommonUtils;
+import com.dvc.utils.EasySql;
 import com.dvc.utils.KeyGenerator;
 import com.dvc.utils.QRNewUtils;
 import com.dvc.utils.Sender;
@@ -184,6 +186,12 @@ public class GenerateBlankCardRecipients {
             }
 
             new RecipientsDao().saveRecipientsFromPI(recipients);
+            String cidrange = new RecipientsDao().getCidRange(Long.parseLong(dto.getBatchsyskey()));
+            Map<String, Object> newbatch = new HashMap<>();
+            newbatch.put("recipientsaved", 1);
+            newbatch.put("syskey", dto.getBatchsyskey());
+            newbatch.put("cidrange", cidrange);
+            new EasySql(DbFactory.getConnection()).updateOne("BatchUpload", "syskey", newbatch);
             context.getLogger().info("Saved recipients finished for blank card batch " + batch.get("batchrefcode"));
             // Map<String, String> options = new HashMap<>();
             // options.put("Authorization", (String) messagedata.get("btoken"));

@@ -391,9 +391,11 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                 }
             }
             getDBClient().insertMany("Recipients", datalist);
+            String cidrange = new RecipientsDao().getCidRange(Long.parseLong(dto.getBatchsyskey()));
             Map<String, Object> newbatch = new HashMap<>();
             newbatch.put("recipientsaved", 1);
             newbatch.put("syskey", dto.getBatchsyskey());
+            newbatch.put("cidrange", cidrange);
             getDBClient().updateOne("BatchUpload", "syskey", newbatch);
             context.getLogger().info(String.valueOf(dto.getDatalist().size()) + " recipients saved successful");
             // CommonUtils.writeFiles(message);
@@ -562,7 +564,7 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
         }
         List<String> keys = Arrays.asList("b.syskey", "b.recordstatus", "uploadeddate", "approveddate", "submitteddate",
                 "uploadedrecords", "batchrefcode", "voidstatus", "partnername", "centerid", "partnerid", "filename",
-                "fileurl", "validcount", "invalidcount", "duration", "b.t3");
+                "fileurl", "validcount", "invalidcount", "duration", "b.t3", "cidrange");
         String query = "";
         List<Map<String, Object>> datalist = new ArrayList<>();
         if (dto.getRole().equals("Admin") || dto.getRole().equals("Finance")) {

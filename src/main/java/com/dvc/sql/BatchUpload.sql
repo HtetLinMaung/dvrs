@@ -39,6 +39,7 @@ create table BatchUpload (
     isblankcard int default 0,
     duration nvarchar(255) default '0s',
     Remark nvarchar(255),
+    cidrange nvarchar(255),
     t1 nvarchar(255),
     t2 nvarchar(255),
     t3 nvarchar(255),
