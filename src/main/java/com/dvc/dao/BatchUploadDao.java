@@ -724,7 +724,8 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                 "nationality", "organization", "mobilephone", "division", "township", "address1", "remark"));
         keys.add("partnersyskey");
         return new EasySql(DbFactory.getConnection()).getMany(keys,
-                "BatchDetails where batchuploadsyskey = ? and recordstatus = ?", Arrays.asList(batchsyskey, status));
+                "BatchDetails where batchuploadsyskey = ? and recordstatus = ? order by serialno",
+                Arrays.asList(batchsyskey, status));
     }
 
     public int updateBatchDetail(String idfield, Map<String, Object> args) throws SQLException {
