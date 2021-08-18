@@ -157,8 +157,6 @@ public class PDFWriterFormatTwo implements PDFWriter {
 			String s = rdata.getAddress1();
 			String[] arr = s.split(" ");
 			String data = arr[arr.length - 1];
-			System.out.println(data.matches(pattern));
-			System.out.println("address size format 2: " + rdata.getAddress1().length());
 			if (data.matches(pattern)) {
 				if (rdata.getAddress1().length() > 140) {
 					rdata.setAddress1(rdata.getAddress1().substring(0, 140));

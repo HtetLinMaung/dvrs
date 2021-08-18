@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import com.dvc.constants.ServerMessage;
 import com.dvc.constants.ServerStatus;
+import com.dvc.dao.RecipientsDownloadDao;
 import com.dvc.middlewares.SecurityMiddleware;
 import com.dvc.models.MiddlewareData;
 import com.dvc.models.SingleResponse;
@@ -84,6 +85,7 @@ public class WriteRecipientsData {
                 if (batchNo == null) {
                     batchNo = "0";
                 }
+                new RecipientsDownloadDao().updateStatus(Long.parseLong(batchNo));
                 String isOverride = "1"; // 1 Override , 2 notOverride
                 List<OutputBinding<String>> queueMsgList = Arrays.asList(messageOne, messageTwo, messageThree,
                         messageFour, messageFive, messageSix, messageSeven, messageEight, messageNine, messageTen);

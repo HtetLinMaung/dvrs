@@ -383,4 +383,18 @@ public class RecipientsDownloadDao {
             e.printStackTrace();
         }
     }
+
+    public void updateStatus(long syskey) {
+        LocalDateTime ldt = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.of("+06:30"));
+        try (Connection conn = DbFactory.getConnection()) {
+            PreparedStatement ps = conn
+                    .prepareStatement("UPDATE BatchUpload SET recordstatus = ?, modifieddate= ? WHERE syskey = ? ");
+            ps.setInt(1, BATCH_UPLOAD_PENDING_STATUS);
+            ps.setObject(2, ldt.toString());
+            ps.setLong(3, syskey);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
