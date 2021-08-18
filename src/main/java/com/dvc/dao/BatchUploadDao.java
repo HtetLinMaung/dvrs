@@ -230,6 +230,23 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                     found = true;
                     srno = Integer.parseInt(rs.getString("cid").replaceAll("^([a-zA-Z]{1,3}[0-9])", ""));
                 }
+                int i = 1;
+                if (!found) {
+                    sql = "insert into CenterLastSerials (syskey, centerid, cid) values (?, ?, ?)";
+                    PreparedStatement addstmt = connection.prepareStatement(sql);
+                    addstmt.setLong(i++, KeyGenerator.generateSyskey());
+                    addstmt.setObject(i++, pi.get("centerid"));
+                    addstmt.setString(i++,
+                            (String) pi.get("centerid") + String.format("%07d", srno + dto.getDatalist().size()));
+                    addstmt.executeUpdate();
+                } else {
+                    sql = "update CenterLastSerials set cid = ? where centerid = ?";
+                    PreparedStatement updatestmt = connection.prepareStatement(sql);
+                    updatestmt.setString(i++,
+                            (String) pi.get("centerid") + String.format("%07d", srno + dto.getDatalist().size()));
+                    updatestmt.setObject(i++, pi.get("centerid"));
+                    updatestmt.executeUpdate();
+                }
 
                 int j = 1;
                 for (Map<String, Object> m : dto.getDatalist()) {
@@ -373,21 +390,7 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
 
                     context.getLogger().info(m.get("batchrefcode") + ":" + cid + " processed completed");
                 }
-                int i = 1;
-                if (!found) {
-                    sql = "insert into CenterLastSerials (syskey, centerid, cid) values (?, ?, ?)";
-                    PreparedStatement addstmt = connection.prepareStatement(sql);
-                    addstmt.setLong(i++, KeyGenerator.generateSyskey());
-                    addstmt.setObject(i++, pi.get("centerid"));
-                    addstmt.setString(i++, (String) pi.get("centerid") + String.format("%07d", srno));
-                    addstmt.executeUpdate();
-                } else {
-                    sql = "update CenterLastSerials set cid = ? where centerid = ?";
-                    PreparedStatement updatestmt = connection.prepareStatement(sql);
-                    updatestmt.setString(i++, (String) pi.get("centerid") + String.format("%07d", srno));
-                    updatestmt.setObject(i++, pi.get("centerid"));
-                    updatestmt.executeUpdate();
-                }
+
             }
             getDBClient().insertMany("Recipients", datalist);
             String cidrange = new RecipientsDao().getCidRange(Long.parseLong(dto.getBatchsyskey()));
