@@ -118,6 +118,10 @@ public class VerifyBatch {
                     m.put("dob", ValidateBatchUtils.normalizeDob((String) m.get("dob")));
                     m.put("batchrefcode", String.format("%s-%s", batch.get("batchrefcode"), serialno));
                     context.getLogger().info(batch.get("batchrefcode") + " Reading serialno " + serialno);
+                    String address1 = (String) m.get("address1");
+                    if (address1.length() > 255) {
+                        m.put("address1", address1.substring(0, 255));
+                    }
                     detaillist.add(m);
                 } catch (Exception rowe) {
                     context.getLogger().severe(rowe.getMessage());
