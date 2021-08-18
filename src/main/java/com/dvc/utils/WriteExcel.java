@@ -19,7 +19,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class WriteExcel {
     public byte[] recipientsToExcel(List<RecipentsData> recipientList) {
         String[] HEADERs = { "CID", "Name", "NRC", "Passport", "Nationality", "Father's Name", "Date of Birth",
-                "Organization", "Mobile", "Ref" , "Address" };
+                "Organization", "Mobile", "Address", "Ref" };
         String SHEET = "recipients";
         Workbook workbook = new XSSFWorkbook();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -68,8 +68,8 @@ public class WriteExcel {
                 row.createCell(6).setCellValue(recipient.getDob() == null ? "" : recipient.getDob());
                 row.createCell(7).setCellValue(recipient.getOccupation() == null ? "" : recipient.getOccupation());
                 row.createCell(8).setCellValue(recipient.getMobilePhone() == null ? "" : recipient.getMobilePhone());
-                row.createCell(9).setCellValue(recipient.getBatchRefCode() == null ? "" : recipient.getBatchRefCode());
-                row.createCell(10).setCellValue(recipient.getAddress1() == null ? "" : recipient.getAddress1());
+                row.createCell(9).setCellValue(recipient.getAddress1() == null ? "" : recipient.getAddress1());
+                row.createCell(10).setCellValue(recipient.getBatchRefCode() == null ? "" : recipient.getBatchRefCode());
 
                 row.getCell(0).setCellStyle(contentStyle);
                 row.getCell(1).setCellStyle(contentStyle);
