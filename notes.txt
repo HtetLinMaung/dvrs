@@ -1,0 +1,28 @@
+Anonymous user
+true-mark (not void)
+CID
+Name
+
+1 - 49 (verify)
+true-mark (not void)
+Center ID (if same center)
+true-mark (if same center)
+CID
+Name
+IC
+Date of Birth
+Gender
+
+50 - 99 (update)
+true-mark (not void)
+Center ID (if same center)
+true-mark (if same center)
+CID
+Name
+IC
+Date of Birth
+Gender
+Batch (if same center)
+Doctor (if same center)
+Dose ID (if same center)
+Update button (if same center)

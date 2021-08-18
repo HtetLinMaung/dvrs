@@ -1,0 +1,32 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  image: maven
+  tags:
+    - build
+  script:
+    - mvn clean package
+  artifacts:
+    paths:
+      - target/azure-functions/dvc-functions-20210719130501166
+
+deploy:
+  stage: deploy
+  image: mcr.microsoft.com/dotnet/core/sdk:3.1
+  tags:
+    - deploy
+  dependencies:
+    - build
+  script:
+    - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+    - apt-get install curl && curl -sL https://deb.nodesource.com/setup_12.x | bash -
+    - apt-get install nodejs
+    - npm install -g azure-functions-core-tools@3 --unsafe-perm true
+    - az login --service-principal -u $APPLICATION_ID -p $APPLICATION_SECRET --tenant $TENANT_ID
+    - cd ./target/azure-functions/dvc-functions-20210719130501166
+    - func azure functionapp publish $FUNCTION_APP
+  only:
+    - master

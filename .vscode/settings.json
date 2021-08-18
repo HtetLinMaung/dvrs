@@ -1,0 +1,9 @@
+{
+    "azureFunctions.deploySubpath": "target/azure-functions/dvc-functions-20210719130501166",
+    "azureFunctions.projectLanguage": "Java",
+    "azureFunctions.projectRuntime": "~3",
+    "debug.internalConsoleOptions": "neverOpen",
+    "azureFunctions.preDeployTask": "package (functions)",
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "editor.formatOnSave": true
+}
