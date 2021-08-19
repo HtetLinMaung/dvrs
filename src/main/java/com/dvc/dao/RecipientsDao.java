@@ -34,6 +34,19 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         return "";
     }
 
+    private String getDoseCondition(FilterDto dto) {
+        if (dto.isAlldose()) {
+            return "";
+        }
+        String condition = "and dose ";
+        if (dto.getOperator() == 0) {
+            condition += "= " + String.valueOf(dto.getDosecount());
+        } else if (dto.getOperator() == 1) {
+            condition += "> " + String.valueOf(dto.getDosecount());
+        }
+        return condition;
+    }
+
     @Override
     public PaginationResponse<Map<String, Object>> getRecipients(FilterDto dto) throws SQLException {
         String searchQuery = EasySql.generateSearchQuery(Arrays.asList("cid", "recipientsname", "nric"),
@@ -49,15 +62,16 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         List<Map<String, Object>> datalist = new ArrayList<>();
         if (dto.getRole().equals("Admin") || dto.getRole().equals("Finance")) {
             query = String.format(
-                    "Recipients as r left join Partners as p on r.partnersyskey = p.syskey WHERE r.recordstatus <> 4 %s and (%s)",
-                    getFilterQuery(dto), searchQuery);
+                    "Recipients as r left join Partners as p on r.partnersyskey = p.syskey WHERE r.recordstatus <> 4 %s %s and (%s)",
+                    getFilterQuery(dto), getDoseCondition(dto), searchQuery);
             datalist = new EasySql(DbFactory.getConnection()).getMany(keys, query, "cid", true, dto.getCurrentpage(),
                     dto.getPagesize(),
                     dto.getPartnersyskey().isEmpty() ? new ArrayList<>() : Arrays.asList(dto.getPartnersyskey()));
         } else {
             query = String.format(
-                    "Recipients as r left join Partners as p on r.partnersyskey = p.syskey WHERE r.recordstatus <> 4 AND r.partnersyskey = ? %s and (%s)",
-                    !dto.getCenterid().isEmpty() ? "and cid like " + "'" + dto.getCenterid() + "%'" : "", searchQuery);
+                    "Recipients as r left join Partners as p on r.partnersyskey = p.syskey WHERE r.recordstatus <> 4 AND r.partnersyskey = ? %s %s and (%s)",
+                    !dto.getCenterid().isEmpty() ? "and cid like " + "'" + dto.getCenterid() + "%'" : "",
+                    getDoseCondition(dto), searchQuery);
             datalist = new EasySql(DbFactory.getConnection()).getMany(keys, query, "cid", true, dto.getCurrentpage(),
                     dto.getPagesize(), Arrays.asList(dto.getPartnersyskey()));
         }

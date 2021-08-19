@@ -11,6 +11,34 @@ public class FilterDto extends BaseDto {
     private String role;
     private boolean all;
 
+    private int dosecount;
+    private int operator; // 0 => = , 1 => >
+    private boolean alldose;
+
+    public int getDosecount() {
+        return dosecount;
+    }
+
+    public void setDosecount(int dosecount) {
+        this.dosecount = dosecount;
+    }
+
+    public int getOperator() {
+        return operator;
+    }
+
+    public void setOperator(int operator) {
+        this.operator = operator;
+    }
+
+    public boolean isAlldose() {
+        return alldose;
+    }
+
+    public void setAlldose(boolean alldose) {
+        this.alldose = alldose;
+    }
+
     public int getPagesize() {
         return pagesize;
     }
