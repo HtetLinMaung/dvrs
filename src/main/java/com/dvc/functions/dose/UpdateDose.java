@@ -28,9 +28,12 @@ public class UpdateDose {
         context.getLogger().info("Java HTTP trigger processed a request.");
 
         try {
-            String txt1 = request.getQueryParameters().get("txt1");
-            String txt2 = request.getQueryParameters().get("txt2");
-            String txt3 = request.getQueryParameters().get("txt3");
+            String txt1 = request.getQueryParameters().get("txt1") == null ? ""
+                    : request.getQueryParameters().get("txt1");
+            String txt2 = request.getQueryParameters().get("txt2") == null ? ""
+                    : request.getQueryParameters().get("txt2");
+            String txt3 = request.getQueryParameters().get("txt3") == null ? ""
+                    : request.getQueryParameters().get("txt3");
             String token = request.getQueryParameters().get("token");
             String userid = request.getQueryParameters().get("userid");
             if (token.split(" ").length > 1) {
@@ -41,16 +44,13 @@ public class UpdateDose {
 
             RecipientsDao dao = new RecipientsDao();
             Map<String, Object> r = dao.getRecipientByKey("cid", cid);
-            // Map<String, Object> info = new HashMap<>();
-            // info.put("batch", txt1);
-            // info.put("doctor", txt2);
-            // info.put("dose", txt3);
-            // info.put("cid", cid);
-            // info.put("nrc", r.get("nric"));
-            // info.put("dob", r.get("dob"));
-            // info.put("name", r.get("recipientsname"));
-            // info.put("userid", userid);
-            // dao.addDoseInfo(info);
+            Map<String, Object> info = new HashMap<>();
+            info.put("lot", txt1);
+            info.put("doctor", txt2);
+            info.put("remark", txt3);
+            info.put("cid", cid);
+            info.put("userid", userid);
+            dao.addDoseInfo(info);
             Map<String, Object> args = new HashMap<>();
             // 1) 23/8/2021, Dr ABC, lot 123456, 1, 1;
             String t10 = r.get("t10") == null ? "" : (String) r.get("t10");
@@ -58,7 +58,6 @@ public class UpdateDose {
 
             args.put("syskey", r.get("syskey"));
             args.put("dose", Integer.parseInt((String) r.get("dose")) + 1);
-            args.put("t9", userid);
             args.put("t10",
                     t10 + String.valueOf(args.get("dose")) + ") "
                             + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(datetime) + ", " + txt2 + ", lot " + txt1
