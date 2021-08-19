@@ -58,6 +58,7 @@ public class UpdateDose {
 
             args.put("syskey", r.get("syskey"));
             args.put("dose", Integer.parseInt((String) r.get("dose")) + 1);
+            args.put("t9", userid);
             args.put("t10",
                     t10 + String.valueOf(args.get("dose")) + ") "
                             + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(datetime) + ", " + txt2 + ", lot " + txt1
