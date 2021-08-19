@@ -58,8 +58,8 @@ public class GetModuleToken {
             body.put("domainid", "DDOI3XO9");
             Map<String, String> options = new HashMap<>();
             options.put("atoken", dto.getAtoken());
-            Map<String, Object> ret = RestClient.post("https://iam.registrationsystem.org/api/userlevel", body,
-                    options);
+
+            Map<String, Object> ret = RestClient.post(System.getenv("IAM_URL") + "/userlevel", body, options);
             if (!"300".equals(ret.get("returncode"))) {
                 res.setRetcode((String) ret.get("returncode"));
                 res.setRetmessage((String) ret.get("message"));

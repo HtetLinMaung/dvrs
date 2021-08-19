@@ -268,7 +268,7 @@ public class ApiUtil {
         final String json = String.format("{\"appid\":\"%s\",\"atoken\":\"%s\",\"userid\":\"%s\"}", appid, atoken,
                 userid);
 
-        String res = postWithFullUrl("https://iam.registrationsystem.org/api/checktoken", json);
+        String res = postWithFullUrl(System.getenv("IAM_URL") + "/checktoken", json);
         CheckTokenData data = new ObjectMapper().readValue(res, CheckTokenData.class);
         if (data.getReturncode().equals(ServerStatus.SUCCESS)) {
             return true;
