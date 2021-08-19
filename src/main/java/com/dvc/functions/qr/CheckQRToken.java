@@ -110,8 +110,9 @@ public class CheckQRToken {
                             && new CenterDao().isCenterValid(dto.getUserid().split("-")[0])
                             && cardid.toLowerCase().startsWith(dto.getUserid().split("-")[0]) && num >= 50
                             && num <= 99) {
-                        rData.put("BTN-Update", "https://apx.registrationsystem.org/api/updatedose?token="
-                                + dto.getYtoken() + "&userid=" + dto.getUserid());
+                        rData.put("BTN-Update Dose " + String.valueOf(dose + 1),
+                                "https://apx.registrationsystem.org/api/updatedose?token=" + dto.getYtoken()
+                                        + "&userid=" + dto.getUserid());
                     }
 
                     rData.put("CID", cardid);
@@ -132,8 +133,7 @@ public class CheckQRToken {
                             && cardid.toLowerCase().startsWith(dto.getUserid().split("-")[0]) && num >= 50
                             && num <= 99) {
                         rData.put("TXT-1", "Lot No.");
-                        rData.put("TXT-2",
-                                "Doctor/Nurse" + (dose > 0 ? " (Dose " + String.valueOf(dose + 1) + ")" : ""));
+                        rData.put("TXT-2", "Doctor/Nurse");
                         rData.put("TXT-3", "Remark");
 
                         context.getLogger().info(dto.getYtoken());
@@ -155,8 +155,9 @@ public class CheckQRToken {
                     } else {
                         rData.put("Void", "false-mark");
                     }
-                    rData.put("BTN-Update", "https://apx.registrationsystem.org/api/updatedose?token=" + dto.getYtoken()
-                            + "&userid=" + dto.getUserid());
+                    rData.put("BTN-Update Dose " + String.valueOf(dose + 1),
+                            "https://apx.registrationsystem.org/api/updatedose?token=" + dto.getYtoken() + "&userid="
+                                    + dto.getUserid());
                     rData.put("CID", cardid);
                     rData.put("Name", recipient.get("recipientsname"));
                     rData.put("NRC/PP", ic);
@@ -168,7 +169,7 @@ public class CheckQRToken {
 
                     rData.put("Gender", recipient.get("gender"));
                     rData.put("TXT-1", "Lot No.");
-                    rData.put("TXT-2", "Doctor/Nurse" + (dose > 0 ? " (Dose " + String.valueOf(dose + 1) + ")" : ""));
+                    rData.put("TXT-2", "Doctor/Nurse");
                     rData.put("TXT-3", "Remark");
 
                     rData.put("Dose Details", recipient.get("t10"));
