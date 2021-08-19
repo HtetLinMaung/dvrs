@@ -52,13 +52,16 @@ public class UpdateDose {
             // info.put("userid", userid);
             // dao.addDoseInfo(info);
             Map<String, Object> args = new HashMap<>();
-            // 23/8/2021, Dr ABC, lot 123456,1;
+            // 1) 23/8/2021, Dr ABC, lot 123456, 1, 1;
             String t10 = r.get("t10") == null ? "" : (String) r.get("t10");
             LocalDateTime datetime = LocalDateTime.now();
+
             args.put("syskey", r.get("syskey"));
             args.put("dose", Integer.parseInt((String) r.get("dose")) + 1);
-            args.put("t10", t10 + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(datetime) + ", " + txt2 + ", lot "
-                    + txt1 + ", " + "1" + ";");
+            args.put("t10",
+                    t10 + String.valueOf(args.get("dose")) + ") "
+                            + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(datetime) + ", " + txt2 + ", lot " + txt1
+                            + ", " + txt3 + ", " + "1" + "; ");
             dao.updateRecipient(args);
 
             context.getLogger().info(new ObjectMapper().writeValueAsString(request.getQueryParameters()));

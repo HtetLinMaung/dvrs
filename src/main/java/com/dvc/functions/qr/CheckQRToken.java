@@ -132,8 +132,8 @@ public class CheckQRToken {
                             && cardid.toLowerCase().startsWith(dto.getUserid().split("-")[0]) && num >= 50
                             && num <= 99) {
                         rData.put("TXT-1", "Lot No.");
-                        rData.put("TXT-2", "Doctor/Nurse");
-                        rData.put("TXT-3", "Dose ID");
+                        rData.put("TXT-2", "Doctor/Nurse" + (dose > 0 ? " (Dose " + recipient.get("dose") + ")" : ""));
+                        rData.put("TXT-3", "Remark");
 
                         context.getLogger().info(dto.getYtoken());
                     }
@@ -167,8 +167,8 @@ public class CheckQRToken {
 
                     rData.put("Gender", recipient.get("gender"));
                     rData.put("TXT-1", "Lot No.");
-                    rData.put("TXT-2", "Doctor/Nurse");
-                    rData.put("TXT-3", "Dose ID");
+                    rData.put("TXT-2", "Doctor/Nurse" + (dose > 0 ? " (Dose " + recipient.get("dose") + ")" : ""));
+                    rData.put("TXT-3", "Remark");
 
                     rData.put("Dose Details", recipient.get("t10"));
                     context.getLogger().info(dto.getYtoken());
