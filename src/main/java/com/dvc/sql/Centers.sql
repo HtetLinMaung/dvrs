@@ -66,7 +66,7 @@ insert into Centers (syskey, centerid, centername, price, allowblank) values (8,
 insert into Centers (syskey, centerid, centername, price, allowblank) values (9,'MDY2', 'Yunnan Association 2', '40000', 0);
 insert into Centers (syskey, centerid, centername, price, allowblank) values (10,'MDY3', 'City Hospital', '40000', 0);
 insert into Centers (syskey, centerid, centername, price, allowblank) values (11,'NPW1', 'Naypyitaw', '40000', 0);
-insert into Centers (syskey, centerid, centername, price, allowblank) values (12,'TGI1', 'Fujian Association', '40000', 0);
+insert into Centers (syskey, centerid, centername, price, allowblank) values (12,'TGI1', 'Fujian Association', '40000', 1);
 insert into Centers (syskey, centerid, centername, price, allowblank) values (13,'TGI2', 'Yunnan Association', '40000', 0);
 insert into Centers (syskey, centerid, centername, price, allowblank) values (14,'LSO1', 'Lashio 1', '40000', 0);
 insert into Centers (syskey, centerid, centername, price, allowblank) values (15,'LSO2', 'Lashio 2', '40000', 0);
