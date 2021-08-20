@@ -110,9 +110,8 @@ public class CheckQRToken {
                             && new CenterDao().isCenterValid(dto.getUserid().split("-")[0])
                             && cardid.toLowerCase().startsWith(dto.getUserid().split("-")[0]) && num >= 50
                             && num <= 99) {
-                        rData.put("BTN-Update Dose " + String.valueOf(dose + 1),
-                                "https://apx.registrationsystem.org/api/updatedose?token=" + dto.getYtoken()
-                                        + "&userid=" + dto.getUserid());
+                        rData.put("BTN-Update Dose " + String.valueOf(dose + 1), System.getenv("UPDATE_DOSE_URL")
+                                + "/updatedose?token=" + dto.getYtoken() + "&userid=" + dto.getUserid());
                     }
 
                     rData.put("CID", cardid);
@@ -155,9 +154,8 @@ public class CheckQRToken {
                     } else {
                         rData.put("Void", "false-mark");
                     }
-                    rData.put("BTN-Update Dose " + String.valueOf(dose + 1),
-                            "https://apx.registrationsystem.org/api/updatedose?token=" + dto.getYtoken() + "&userid="
-                                    + dto.getUserid());
+                    rData.put("BTN-Update Dose " + String.valueOf(dose + 1), System.getenv("UPDATE_DOSE_URL")
+                            + "/updatedose?token=" + dto.getYtoken() + "&userid=" + dto.getUserid());
                     rData.put("CID", cardid);
                     rData.put("Name", recipient.get("recipientsname"));
                     rData.put("NRC/PP", ic);
