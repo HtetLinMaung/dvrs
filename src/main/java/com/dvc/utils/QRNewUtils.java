@@ -58,7 +58,7 @@ public class QRNewUtils {
 
     public static String generateQRToken(QRYData data) {
         String Y = generateY(data);
-        String Ystr = "VRS," + Y;
+        String Ystr = System.getenv("ICODE") + "," + Y;
         byte[] bKey = new byte[24];
         byte[] bData = new byte[40];
         bKey = hexStringToByteArray(key1);
