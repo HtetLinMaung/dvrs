@@ -2,6 +2,7 @@ package com.dvc.utils;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -51,24 +52,48 @@ public class ValidateBatchUtils {
         return String.join("/", Arrays.asList(day, month, year));
     }
 
-    public static boolean isDobValid(String dob) {
-        int age = Integer.parseInt(System.getenv("AGE"));
-        String d = normalizeDob(dob);
-        return (d.matches("([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})")
-                && LocalDate.now().getYear() - Integer.parseInt(d.split("/")[2]) >= age)
-                || (d.matches("([0-9]{1,2})\\.([0-9]{1,2})\\.([0-9]{2,4})")
-                        && LocalDate.now().getYear() - Integer.parseInt(d.split("\\.")[2]) >= age)
-                || (d.matches("([0-9]{1,2})-([0-9]{1,2})-([0-9]{2,4})")
-                        && LocalDate.now().getYear() - Integer.parseInt(d.split("-")[2]) >= age)
+    public static int getAge(String dob) {
+        String[] dobarr = dob.split("/");
+        if (dobarr.length != 3)
+            return 0;
 
-                || (d.matches("([\\u1040-\\u1049]{1,2})/([\\u1040-\\u1049]{1,2})/([\\u1040-\\u1049]{2,4})")
-                        && LocalDate.now().getYear() - Integer.parseInt(LanguageUtils.toEngNum(d.split("/")[2])) >= age)
-                || (d.matches("([\\u1040-\\u1049]{1,2})\\.([\\u1040-\\u1049]{1,2})\\.([\\u1040-\\u1049]{2,4})")
-                        && LocalDate.now().getYear()
-                                - Integer.parseInt(LanguageUtils.toEngNum(d.split("\\.")[2])) >= age)
-                || (d.matches("([\\u1040-\\u1049]{1,2})-([\\u1040-\\u1049]{1,2})-([\\u1040-\\u1049]{2,4})")
-                        && LocalDate.now().getYear()
-                                - Integer.parseInt(LanguageUtils.toEngNum(d.split("-")[2])) >= age);
+        LocalDate l = LocalDate.of(Integer.parseInt(dobarr[2]), Integer.parseInt(dobarr[1]),
+                Integer.parseInt(dobarr[0]));
+        LocalDate now = LocalDate.now();
+        Period diff = Period.between(l, now);
+        return diff.getYears();
+    }
+
+    public static boolean isAgeValid(String dob) {
+        if (getAge(dob) >= Integer.parseInt(System.getenv("AGE"))) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isDobValid(String dob) {
+        // int age = Integer.parseInt(System.getenv("AGE"));
+        String d = normalizeDob(dob);
+        return d.matches("([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})") && isAgeValid(d);
+        // return (d.matches("([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})")
+        // && LocalDate.now().getYear() - Integer.parseInt(d.split("/")[2]) >= age)
+        // || (d.matches("([0-9]{1,2})\\.([0-9]{1,2})\\.([0-9]{2,4})")
+        // && LocalDate.now().getYear() - Integer.parseInt(d.split("\\.")[2]) >= age)
+        // || (d.matches("([0-9]{1,2})-([0-9]{1,2})-([0-9]{2,4})")
+        // && LocalDate.now().getYear() - Integer.parseInt(d.split("-")[2]) >= age)
+
+        // ||
+        // (d.matches("([\\u1040-\\u1049]{1,2})/([\\u1040-\\u1049]{1,2})/([\\u1040-\\u1049]{2,4})")
+        // && LocalDate.now().getYear() -
+        // Integer.parseInt(LanguageUtils.toEngNum(d.split("/")[2])) >= age)
+        // ||
+        // (d.matches("([\\u1040-\\u1049]{1,2})\\.([\\u1040-\\u1049]{1,2})\\.([\\u1040-\\u1049]{2,4})")
+        // && LocalDate.now().getYear()
+        // - Integer.parseInt(LanguageUtils.toEngNum(d.split("\\.")[2])) >= age)
+        // ||
+        // (d.matches("([\\u1040-\\u1049]{1,2})-([\\u1040-\\u1049]{1,2})-([\\u1040-\\u1049]{2,4})")
+        // && LocalDate.now().getYear()
+        // - Integer.parseInt(LanguageUtils.toEngNum(d.split("-")[2])) >= age);
     }
 
     public static boolean isNricValid(String nric) {
