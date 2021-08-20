@@ -78,7 +78,7 @@ public class CheckQRToken {
                     } else {
                         rData.put("Void", "false-mark");
                     }
-                    rData.put("CID", cardid);
+                    rData.put("CID" + (System.getenv("ICODE").equals("VRS") ? "VRS" : "VRS UAT"), cardid);
                     rData.put("Name", recipient.get("recipientsname"));
                     rData.put("NRC/PP", ic);
                     if (recipient.get("dob") != null) {
@@ -114,7 +114,7 @@ public class CheckQRToken {
                                 + "/updatedose?token=" + dto.getYtoken() + "&userid=" + dto.getUserid());
                     }
 
-                    rData.put("CID", cardid);
+                    rData.put("CID" + (System.getenv("ICODE").equals("VRS") ? "VRS" : "VRS UAT"), cardid);
                     rData.put("Name", recipient.get("recipientsname"));
                     if (num >= 1 && num <= 99) {
                         rData.put("NRC/PP", ic);
@@ -145,7 +145,7 @@ public class CheckQRToken {
                     } else {
                         rData.put("Void", "false-mark");
                     }
-                    rData.put("CID", cardid);
+                    rData.put("CID" + (System.getenv("ICODE").equals("VRS") ? "VRS" : "VRS UAT"), cardid);
                     rData.put("Name", recipient.get("recipientsname"));
                 } else if (dto.getUserid().matches("admin-(.*)@vrs")) {
                     if (recipient.get("voidstatus").equals("1")) {
@@ -156,7 +156,7 @@ public class CheckQRToken {
                     }
                     rData.put("BTN-Update Dose " + String.valueOf(dose + 1), System.getenv("UPDATE_DOSE_URL")
                             + "/updatedose?token=" + dto.getYtoken() + "&userid=" + dto.getUserid());
-                    rData.put("CID", cardid);
+                    rData.put("CID" + (System.getenv("ICODE").equals("VRS") ? "VRS" : "VRS UAT"), cardid);
                     rData.put("Name", recipient.get("recipientsname"));
                     rData.put("NRC/PP", ic);
                     if (recipient.get("dob") != null) {
