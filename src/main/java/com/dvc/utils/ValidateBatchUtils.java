@@ -57,8 +57,20 @@ public class ValidateBatchUtils {
         if (dobarr.length != 3)
             return 0;
 
-        LocalDate l = LocalDate.of(Integer.parseInt(dobarr[2]), Integer.parseInt(dobarr[1]),
-                Integer.parseInt(dobarr[0]));
+        int day = Integer.parseInt(dobarr[0]);
+        int year = Integer.parseInt(dobarr[2]);
+        int month = Integer.parseInt(dobarr[1]);
+        LocalDate l;
+        try {
+            if (month > 12) {
+                l = LocalDate.of(year, day, month);
+            } else {
+                l = LocalDate.of(year, month, day);
+            }
+        } catch (Exception e) {
+            return 0;
+        }
+
         LocalDate now = LocalDate.now();
         Period diff = Period.between(l, now);
         return diff.getYears();
