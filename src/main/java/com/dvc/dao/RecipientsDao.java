@@ -299,4 +299,14 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
                 Arrays.asList("cl.cid", "firstdosedate", "firstdosetime", "seconddosetime", "centername"),
                 "CenterLastSerials as cl left join Recipients as r on r.cid = cl.cid left join Centers as c on c.centerid = cl.centerid where cl.centerid = 'YGN1'");
     }
+
+    // public List<Map<String, Object>> getSummary() throws SQLException {
+    // final String sql = "select cl.cid, firstdosedate, firstdosetime,
+    // seconddosetime, centername, c.centerid, (select count(*) from Recipients
+    // where) from CenterLastSerials as cl left join Recipients as r on r.cid =
+    // cl.cid left join Centers as c on c.centerid = cl.centerid";
+    // try (Connection connection = DbFactory.getConnection();
+    // PreparedStatement stmt = connection.prepareStatement(sql)) {
+    // }
+    // }
 }
