@@ -300,13 +300,24 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
                 "CenterLastSerials as cl left join Recipients as r on r.cid = cl.cid left join Centers as c on c.centerid = cl.centerid where cl.centerid = 'YGN1'");
     }
 
-    // public List<Map<String, Object>> getSummary() throws SQLException {
-    // final String sql = "select cl.cid, firstdosedate, firstdosetime,
-    // seconddosetime, centername, c.centerid, (select count(*) from Recipients
-    // where) from CenterLastSerials as cl left join Recipients as r on r.cid =
-    // cl.cid left join Centers as c on c.centerid = cl.centerid";
-    // try (Connection connection = DbFactory.getConnection();
-    // PreparedStatement stmt = connection.prepareStatement(sql)) {
-    // }
-    // }
+    public List<Map<String, Object>> getSummary() throws SQLException {
+
+        List<Map<String, Object>> datalist = getDBClient().getMany(
+                Arrays.asList("cl.cid", "c.centerid", "firstdosedate", "firstdosetime", "seconddosetime", "centername"),
+                "CenterLastSerials as cl left join Recipients as r on r.cid = cl.cid left join Centers as c on c.centerid = cl.centerid");
+
+        for (Map<String, Object> data : datalist) {
+            data.put("cards", getTotalCount("Recipients where cid like '" + data.get("centerid") + "%'"));
+            data.put("picount",
+                    getTotalCount("ProformaInvoice where centerid = ?", Arrays.asList(data.get("centerid"))));
+            data.put("batchcount", getTotalCount(
+                    "BatchUpload as b left join ProformaInvoice as pi on b.pisyskey = pi.syskey where pi.centerid = ?",
+                    Arrays.asList(data.get("centerid"))));
+            data.put("partnercount", getTotalCount(
+                    "Partners as p left join ProformaInvoice as pi on p.syskey = pi.partnersyskey where pi.centerid = ?",
+                    Arrays.asList(data.get("centerid"))));
+
+        }
+        return datalist;
+    }
 }

@@ -9,6 +9,7 @@ import com.dvc.middlewares.SecurityMiddleware;
 import com.dvc.models.BaseResponse;
 import com.dvc.models.MiddlewareData;
 import com.dvc.models.SingleResponse;
+import com.dvc.utils.EasyData;
 import com.microsoft.azure.functions.*;
 
 /**
@@ -41,6 +42,10 @@ public class GetYGN1Latest {
             }
             SingleResponse<Map<String, Object>> res = new SingleResponse<>();
             res.setData(datalist.get(0));
+
+            // Map<String, Object> res = new EasyData<BaseResponse>(new
+            // BaseResponse()).toMap();
+            // res.put("datalist", datalist);
             return request.createResponseBuilder(HttpStatus.OK).body(res).build();
         } catch (Exception e) {
             context.getLogger().severe(e.getMessage());
