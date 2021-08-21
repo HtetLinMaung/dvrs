@@ -17,6 +17,7 @@ import com.dvc.factory.DbFactory;
 import com.dvc.models.FilterDto;
 import com.dvc.models.PaginationResponse;
 import com.dvc.models.RecipientsDto;
+import com.dvc.models.ReportDto;
 import com.dvc.utils.EasyData;
 import com.dvc.utils.EasySql;
 import com.dvc.utils.KeyGenerator;
@@ -327,5 +328,11 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
 
         }
         return datalist;
+    }
+
+    public List<Map<String, Object>> getRecipients(ReportDto dto) throws SQLException {
+        return getDBClient().getMany(dto.getColumns(), String
+                .format("Recipients where centerid like %s and partnersyskey = ?", "'" + dto.getCenterid() + "%'"),
+                Arrays.asList(dto.getPartnersyskey()));
     }
 }
