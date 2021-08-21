@@ -33,19 +33,18 @@ public class GetYGN1Latest {
             if (!auth.isSuccess()) {
                 return auth.getResponse();
             }
-            List<Map<String, Object>> datalist = new RecipientsDao().getYgn1Latest();
-            if (datalist.size() == 0) {
-                BaseResponse res = new BaseResponse();
-                res.setRetcode(ServerStatus.NO_DATA_ERROR);
-                res.setRetmessage(ServerMessage.NO_DATA_ERROR);
-                return request.createResponseBuilder(HttpStatus.NOT_FOUND).body(res).build();
-            }
-            SingleResponse<Map<String, Object>> res = new SingleResponse<>();
-            res.setData(datalist.get(0));
+            List<Map<String, Object>> datalist = new RecipientsDao().getSummary();
+            // if (datalist.size() == 0) {
+            // BaseResponse res = new BaseResponse();
+            // res.setRetcode(ServerStatus.NO_DATA_ERROR);
+            // res.setRetmessage(ServerMessage.NO_DATA_ERROR);
+            // return request.createResponseBuilder(HttpStatus.NOT_FOUND).body(res).build();
+            // }
+            // SingleResponse<Map<String, Object>> res = new SingleResponse<>();
+            // res.setData(datalist.get(0));
 
-            // Map<String, Object> res = new EasyData<BaseResponse>(new
-            // BaseResponse()).toMap();
-            // res.put("datalist", datalist);
+            Map<String, Object> res = new EasyData<BaseResponse>(new BaseResponse()).toMap();
+            res.put("datalist", datalist);
             return request.createResponseBuilder(HttpStatus.OK).body(res).build();
         } catch (Exception e) {
             context.getLogger().severe(e.getMessage());
