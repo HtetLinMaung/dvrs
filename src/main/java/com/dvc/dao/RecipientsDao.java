@@ -18,6 +18,7 @@ import com.dvc.models.FilterDto;
 import com.dvc.models.PaginationResponse;
 import com.dvc.models.RecipientsDto;
 import com.dvc.models.ReportDto;
+import com.dvc.utils.Cid;
 import com.dvc.utils.EasyData;
 import com.dvc.utils.EasySql;
 import com.dvc.utils.KeyGenerator;
@@ -313,7 +314,9 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         for (Map<String, Object> data : datalist) {
             // data.put("cards", getTotalCount("Recipients where cid like '" +
             // data.get("centerid") + "%'"));
-            data.put("cards", Integer.parseInt(((String) data.get("cid")).replaceAll("^([a-zA-Z]{1,3}[0-9])", "")));
+            // data.put("cards", Integer.parseInt(((String)
+            // data.get("cid")).replaceAll("^([a-zA-Z]{1,3}[0-9])", "")));
+            data.put("cards", Cid.getNumberFromCid((String) data.get("cid")));
             // data.put("picount",
             // getTotalCount("ProformaInvoice where centerid = ?",
             // Arrays.asList(data.get("centerid"))));

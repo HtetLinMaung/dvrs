@@ -16,6 +16,7 @@ import com.dvc.factory.DbFactory;
 import com.dvc.models.CenterDto;
 import com.dvc.models.FilterDto;
 import com.dvc.models.PaginationResponse;
+import com.dvc.utils.Cid;
 import com.dvc.utils.EasyData;
 import com.dvc.utils.EasySql;
 import com.dvc.utils.KeyGenerator;
@@ -29,7 +30,8 @@ public class CenterDao extends BaseDao implements ICenterDao {
     }
 
     private String sum(List<String> datalist) {
-        int total = datalist.stream().map(data -> Integer.parseInt(data.replaceAll("^([a-zA-Z]{1,3}[0-9])", "")))
+        int total = datalist.stream()
+                .map(data -> Integer.parseInt(data.replaceAll("^([a-zA-Z]{1,3}[0-9])", "").replaceAll("^[a-zA-Z]", "")))
                 .reduce(0, (subtotal, element) -> {
                     return subtotal + element;
                 });

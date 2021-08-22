@@ -28,7 +28,7 @@ import com.dvc.models.FilterDto;
 import com.dvc.models.PaginationResponse;
 import com.dvc.models.QRYData;
 import com.dvc.utils.AzureBlobUtils;
-
+import com.dvc.utils.Cid;
 import com.dvc.utils.EasySql;
 import com.dvc.utils.ExcelUtil;
 import com.dvc.utils.KeyGenerator;
@@ -226,9 +226,13 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                 ResultSet rs = stmt.executeQuery();
                 int srno = 0;
                 boolean found = false;
+
                 while (rs.next()) {
                     found = true;
-                    srno = Integer.parseInt(rs.getString("cid").replaceAll("^([a-zA-Z]{1,3}[0-9])", ""));
+                    srno = Cid.getNumberFromCid(rs.getString("cid"));
+                    // srno =
+                    // Integer.parseInt(rs.getString("cid").replaceAll("^([a-zA-Z]{1,3}[0-9])",
+                    // ""));
                 }
                 int i = 1;
                 if (!found) {

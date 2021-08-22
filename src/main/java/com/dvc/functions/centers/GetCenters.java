@@ -35,6 +35,14 @@ public class GetCenters {
             }
             List<Map<String, Object>> datalist = new CenterDao().getCenters();
             Map<String, Object> res = new EasyData<BaseResponse>(new BaseResponse()).toMap();
+            if (!auth.getTokenData().getRole().equals("Partner")) {
+                Map<String, Object> center = new HashMap<>();
+                center.put("centerid", "YGN");
+                center.put("centername", "Virtual Center");
+                center.put("allowblank", "0");
+                center.put("price", "50000");
+                datalist.add(center);
+            }
             res.put("datalist", datalist);
             return request.createResponseBuilder(HttpStatus.OK).body(res).build();
         } catch (Exception e) {
