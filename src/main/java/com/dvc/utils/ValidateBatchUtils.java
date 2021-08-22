@@ -161,8 +161,7 @@ public class ValidateBatchUtils {
                     || nrc.matches(
                             "^1([0-4]{1})/([\\u1000-\\u1027]{3})\\((\\u1014\\u102D\\u102F\\u1004\\u103A|\\u1014\\u102d\\u1004\\u103a|.*)\\)([0-9\\u1040-\\u1049]{6})$")
                     || nrc.matches("^([A-Z]{1,5})(.*)([0-9\\u1040-\\u1049]{5,10})$")
-                    || nrc.matches("^([0-9]{1,2})/(.*)([0-9\\u1040-\\u1049]{6,10})$");
-            // || nrc.matches(".*");
+                    || nrc.matches("^([0-9]{1,2})/(.*)([0-9\\u1040-\\u1049]{6,10})$") || nrc.matches(".*");
         }
         if (System.getenv("ALLOW_ENG_NRC").equals("1")) {
             return nrc.matches("\u101c\u103b\u1031\u102c\u1000\u103a\u1011\u102c\u1038\u1006\u1032")
