@@ -124,9 +124,7 @@ public class ChangeBatchStatus {
                     case 3:
                         args.put("voidstatus", bStatus.getStatus());
                         new BatchUploadDao().updateBatch(args);
-                        if (bStatus.getStatus() == 0) {
-                            new RecipientsDao().voidRecipientsByBatch(bStatus.getSyskey(), 0);
-                        }
+                        new RecipientsDao().voidRecipientsByBatch(bStatus.getSyskey(), bStatus.getStatus());
                         break;
                 }
 

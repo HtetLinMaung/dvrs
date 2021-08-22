@@ -237,17 +237,19 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         args.put("voidstatus", status);
         args.put("modifieddate", Instant.now().toString());
         int voidcount = getDBClient().updateOne("Recipients", "syskey", args);
-        if (status == 0) {
-            args = getDBClient().getOne(Arrays.asList("p.syskey", "voidcount"),
-                    "Recipients as r left join ProformaInvoice as p on r.pisyskey = p.syskey where r.syskey = ?",
-                    Arrays.asList(syskey));
-            if (args.get("syskey") == null) {
-                return 0;
-            }
-            args.put("voidcount", Integer.parseInt((String) args.get("voidcount")) + voidcount);
-            return getDBClient().updateOne("ProformaInvoice", "syskey", args);
+
+        args = getDBClient().getOne(Arrays.asList("p.syskey", "voidcount"),
+                "Recipients as r left join ProformaInvoice as p on r.pisyskey = p.syskey where r.syskey = ?",
+                Arrays.asList(syskey));
+        if (args.get("syskey") == null) {
+            return 0;
         }
-        return voidcount;
+        if (status == 0) {
+            args.put("voidcount", Integer.parseInt((String) args.get("voidcount")) + voidcount);
+        } else {
+            args.put("voidcount", Integer.parseInt((String) args.get("voidcount")) - voidcount);
+        }
+        return getDBClient().updateOne("ProformaInvoice", "syskey", args);
     }
 
     @Override
@@ -285,7 +287,23 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
                 return getDBClient().updateOne("ProformaInvoice", "syskey", args);
             }
         } else {
-            return getDBClient().updateOne("Recipients", "batchuploadsyskey", args);
+            final String sql = "update Recipients set voidstatus = ? where batchuploadsyskey = ? and voidstatus = 0";
+            try (Connection connection = DbFactory.getConnection();
+                    PreparedStatement stmt = connection.prepareStatement(sql)) {
+                int i = 1;
+                stmt.setInt(i++, voidstatus);
+                stmt.setString(i++, batchsyskey);
+                int voidcount = stmt.executeUpdate();
+                Map<String, Object> batch = getDBClient().getOne(Arrays.asList("pisyskey"),
+                        "BatchUpload where syskey = ?", Arrays.asList(batchsyskey));
+                if (batch.get("pisyskey") == null) {
+                    return 0;
+                }
+                args = getDBClient().getOne(Arrays.asList("syskey", "voidcount"), "ProformaInvoice where syskey = ?",
+                        Arrays.asList(batch.get("pisyskey")));
+                args.put("voidcount", Integer.parseInt((String) args.get("voidcount")) - voidcount);
+                return getDBClient().updateOne("ProformaInvoice", "syskey", args);
+            }
         }
 
     }
