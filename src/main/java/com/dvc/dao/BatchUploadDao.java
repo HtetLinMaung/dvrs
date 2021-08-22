@@ -372,6 +372,10 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                         // recipient.put("seconddosetime", firstdosetime);
                         // }
 
+                    } else if (pi.get("centerid").equals("YGN")) {
+                        recipient.put("firstdosedate", "23/08/2021");
+                        recipient.put("firstdosetime", "8:30 AM");
+                        recipient.put("seconddosetime", "8:30 AM");
                     }
 
                     QRYData data = new QRYData();
