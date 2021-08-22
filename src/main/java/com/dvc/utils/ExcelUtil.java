@@ -171,7 +171,7 @@ public class ExcelUtil {
                         isempty = false;
                     }
                     if (j < headers.size()) {
-                        System.out.println("Processing row " + String.valueOf(j));
+
                         map.put(headers.get(j), getCellValue(cell, workbook));
                     }
                     j++;
@@ -180,9 +180,10 @@ public class ExcelUtil {
                     map.put(headers.get(j), "");
                     j++;
                 }
-                if (!isempty)
+                if (!isempty) {
                     datalist.add(map);
-                else {
+                    System.out.println("Processing row " + String.valueOf(i + 1));
+                } else {
                     break;
                 }
             }
