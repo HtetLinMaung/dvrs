@@ -118,7 +118,7 @@ public class ValidateBatchUtils {
     }
 
     public static String normalizeNrc(String nric) {
-        return nric.replaceAll("\\s", "").replaceAll("\\.", "");
+        return nric.replaceAll("\\s", "").replaceAll("\\.", "").trim();
     }
 
     // public static String normalizeName(String name) {
