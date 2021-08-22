@@ -30,11 +30,22 @@ public class CenterDao extends BaseDao implements ICenterDao {
     }
 
     private String sum(List<String> datalist) {
-        int total = datalist.stream()
-                .map(data -> Integer.parseInt(data.replaceAll("^([a-zA-Z]{1,3}[0-9])", "").replaceAll("^[a-zA-Z]", "")))
-                .reduce(0, (subtotal, element) -> {
-                    return subtotal + element;
-                });
+        // int total = datalist.stream().map(data ->
+        // Integer.parseInt(data.replaceAll("^([a-zA-Z]{1,3}[0-9])", "")))
+        // .reduce(0, (subtotal, element) -> {
+        // return subtotal + element;
+        // });
+        // return String.format("%07d", total);
+        int total = datalist.stream().map(data -> {
+            if (data.matches("^([a-zA-Z]){1,3}([0-9]{7,8})$")) {
+                return Cid.getNumberFromCid(data);
+            } else {
+                return Integer.parseInt(data);
+            }
+
+        }).reduce(0, (subtotal, element) -> {
+            return subtotal + element;
+        });
         return String.format("%07d", total);
     }
 
