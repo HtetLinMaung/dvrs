@@ -30,8 +30,12 @@ public class ValidateBatchUtils {
             if (d.matches("^[\\u1040-\\u1049]{4}$")) {
                 y = LanguageUtils.toEngNum(d);
             }
-            if (Integer.parseInt(y) >= 1900)
+            // if (Integer.parseInt(y) >= 1900) {
+            // return "01/01/" + y;
+            // }
+            if (Integer.parseInt(y) >= 1300) {
                 return "01/01/" + y;
+            }
 
         } else if (d.matches("^[\\u1040-\\u1049]{1,3}|[0-9]{1,3}$")) {
             String num = d;
