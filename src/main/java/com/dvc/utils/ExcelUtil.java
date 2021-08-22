@@ -37,7 +37,8 @@ public class ExcelUtil {
             // }
             if (cell.getCellType() != CellType.NUMERIC
                     && detector.getZawgyiProbability(cell.getStringCellValue()) > 0.999) {
-                System.out.println("Processing cell" + String.valueOf(cell.getColumnIndex() + 1));
+                // System.out.println("Processing cell" + String.valueOf(cell.getColumnIndex() +
+                // 1));
                 return Converter.zg12uni51(cell.getStringCellValue());
             } else if (cell.getCellType() == CellType.NUMERIC || cell.getCellType() == CellType.FORMULA) {
                 if (DateUtil.isCellDateFormatted(cell)) {
@@ -46,10 +47,12 @@ public class ExcelUtil {
                     return df.format(date);
                 }
             }
-            System.out.println("Processing cell" + String.valueOf(cell.getColumnIndex() + 1));
+            // System.out.println("Processing cell" + String.valueOf(cell.getColumnIndex() +
+            // 1));
             return cell.getStringCellValue();
         } catch (Exception e) {
-            System.out.println("Processing cell" + String.valueOf(cell.getColumnIndex() + 1));
+            // System.out.println("Processing cell" + String.valueOf(cell.getColumnIndex() +
+            // 1));
             try {
                 return Double.toString(cell.getNumericCellValue());
             } catch (Exception e2) {
@@ -168,6 +171,7 @@ public class ExcelUtil {
                         isempty = false;
                     }
                     if (j < headers.size()) {
+                        System.out.println("Processing row " + String.valueOf(j));
                         map.put(headers.get(j), getCellValue(cell, workbook));
                     }
                     j++;
