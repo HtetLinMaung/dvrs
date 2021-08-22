@@ -5,7 +5,7 @@ create table AttachmentFiles (
     userid nvarchar(50),
     username nvarchar(50),
     recordstatus SMALLINT default 1,
-    filename text default '',
+    filename ntext default '',
     description text default '',
     pisyskey bigint not null,
     t1 nvarchar(255),

@@ -16,6 +16,7 @@ import com.dvc.factory.DbFactory;
 import com.dvc.models.CenterDto;
 import com.dvc.models.FilterDto;
 import com.dvc.models.PaginationResponse;
+import com.dvc.utils.Cid;
 import com.dvc.utils.EasyData;
 import com.dvc.utils.EasySql;
 import com.dvc.utils.KeyGenerator;
@@ -23,16 +24,28 @@ import com.dvc.utils.KeyGenerator;
 public class CenterDao extends BaseDao implements ICenterDao {
 
     @Override
-    public List<Map<String, Object>> getCenters() throws SQLException {
+    public List<Map<String, Object>> getCenters(String role) throws SQLException {
         return getDBClient().getMany(Arrays.asList("centerid", "centername", "allowblank", "price"),
-                "Centers where recordstatus <> 4");
+                "Centers where recordstatus  " + (role.equals("Partner") ? "= 1" : " <> 4"));
     }
 
     private String sum(List<String> datalist) {
-        int total = datalist.stream().map(data -> Integer.parseInt(data.replaceAll("^([a-zA-Z]{1,3}[0-9])", "")))
-                .reduce(0, (subtotal, element) -> {
-                    return subtotal + element;
-                });
+        // int total = datalist.stream().map(data ->
+        // Integer.parseInt(data.replaceAll("^([a-zA-Z]{1,3}[0-9])", "")))
+        // .reduce(0, (subtotal, element) -> {
+        // return subtotal + element;
+        // });
+        // return String.format("%07d", total);
+        int total = datalist.stream().map(data -> {
+            if (data.matches("^([a-zA-Z]){1,3}([0-9]{7,8})$")) {
+                return Cid.getNumberFromCid(data);
+            } else {
+                return Integer.parseInt(data);
+            }
+
+        }).reduce(0, (subtotal, element) -> {
+            return subtotal + element;
+        });
         return String.format("%07d", total);
     }
 

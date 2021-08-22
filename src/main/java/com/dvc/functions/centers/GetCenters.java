@@ -33,7 +33,7 @@ public class GetCenters {
             if (!auth.isSuccess()) {
                 return auth.getResponse();
             }
-            List<Map<String, Object>> datalist = new CenterDao().getCenters();
+            List<Map<String, Object>> datalist = new CenterDao().getCenters(auth.getTokenData().getRole());
             Map<String, Object> res = new EasyData<BaseResponse>(new BaseResponse()).toMap();
             res.put("datalist", datalist);
             return request.createResponseBuilder(HttpStatus.OK).body(res).build();

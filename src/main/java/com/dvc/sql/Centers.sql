@@ -96,4 +96,5 @@ insert into Centers (syskey, centerid, centername, price, allowblank) values (38
 insert into Centers (syskey, centerid, centername, price, allowblank) values (39,'MYK1', 'Myeik', '40000', 0);
 insert into Centers (syskey, centerid, centername, price, allowblank) values (40,'SGN1', 'Sagaing', '40000', 0);
 insert into Centers (syskey, centerid, centername, price, allowblank) values (41,'DWI1', 'Dawei 1', '40000', 0);
+insert into Centers (syskey, centerid, centername, price, allowblank, recordstatus) values (42,'YGN', 'Reserved for adminstration', '50000', 0, 2);
 

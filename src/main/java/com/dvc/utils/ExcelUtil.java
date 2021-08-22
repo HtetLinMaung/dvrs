@@ -1,8 +1,8 @@
 package com.dvc.utils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.dvc.constants.CommonConstants;
 import com.google.myanmartools.ZawgyiDetector;
@@ -21,7 +22,6 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelUtil {
@@ -199,5 +199,32 @@ public class ExcelUtil {
         } else {
             return CommonConstants.HEADERS_F;
         }
+    }
+
+    public static byte[] writeExcel(List<Map<String, Object>> datalist, String sheetname) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet(sheetname);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        if (datalist.size() > 0) {
+            List<String> keys = datalist.get(0).entrySet().stream().map(p -> p.getKey()).collect(Collectors.toList());
+            int i = 0;
+            Row row = sheet.createRow(i++);
+            int j = 0;
+            for (String key : keys) {
+                Cell cell = row.createCell(j++);
+                cell.setCellValue(key);
+            }
+            for (Map<String, Object> data : datalist) {
+                j = 0;
+                row = sheet.createRow(i++);
+                for (String key : keys) {
+                    Cell cell = row.createCell(j++);
+                    cell.setCellValue((String) data.get(key));
+                }
+            }
+            workbook.write(out);
+            workbook.close();
+        }
+        return out.toByteArray();
     }
 }

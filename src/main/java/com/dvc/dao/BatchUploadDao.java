@@ -28,7 +28,7 @@ import com.dvc.models.FilterDto;
 import com.dvc.models.PaginationResponse;
 import com.dvc.models.QRYData;
 import com.dvc.utils.AzureBlobUtils;
-
+import com.dvc.utils.Cid;
 import com.dvc.utils.EasySql;
 import com.dvc.utils.ExcelUtil;
 import com.dvc.utils.KeyGenerator;
@@ -226,9 +226,13 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                 ResultSet rs = stmt.executeQuery();
                 int srno = 0;
                 boolean found = false;
+
                 while (rs.next()) {
                     found = true;
-                    srno = Integer.parseInt(rs.getString("cid").replaceAll("^([a-zA-Z]{1,3}[0-9])", ""));
+                    srno = Cid.getNumberFromCid(rs.getString("cid"));
+                    // srno =
+                    // Integer.parseInt(rs.getString("cid").replaceAll("^([a-zA-Z]{1,3}[0-9])",
+                    // ""));
                 }
                 int i = 1;
                 if (!found) {
@@ -264,9 +268,10 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                         // dob.split("/")[2] + String.format("%02d",
                         // Integer.parseInt(dob.split("/")[1]))
                         // + String.format("%02d", Integer.parseInt(dob.split("/")[0])));
-                        int dobyear = Integer.parseInt(dob.split("/")[2]);
-                        int year = LocalDate.now().getYear();
-                        recipient.put("age", year - dobyear);
+                        // int dobyear = Integer.parseInt(dob.split("/")[2]);
+                        // int year = LocalDate.now().getYear();
+                        recipient.put("age", ValidateBatchUtils.getAge(dob));
+
                     }
 
                     recipient.put("batchuploadsyskey", dto.getBatchsyskey());
@@ -368,6 +373,10 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                         // recipient.put("seconddosetime", firstdosetime);
                         // }
 
+                    } else if (pi.get("centerid").equals("YGN")) {
+                        recipient.put("firstdosedate", "23/08/2021");
+                        recipient.put("firstdosetime", "8:30 AM");
+                        recipient.put("seconddosetime", "8:30 AM");
                     }
 
                     QRYData data = new QRYData();

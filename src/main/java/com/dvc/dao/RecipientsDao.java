@@ -17,6 +17,8 @@ import com.dvc.factory.DbFactory;
 import com.dvc.models.FilterDto;
 import com.dvc.models.PaginationResponse;
 import com.dvc.models.RecipientsDto;
+import com.dvc.models.ReportDto;
+import com.dvc.utils.Cid;
 import com.dvc.utils.EasyData;
 import com.dvc.utils.EasySql;
 import com.dvc.utils.KeyGenerator;
@@ -61,17 +63,20 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         String query = "";
         List<Map<String, Object>> datalist = new ArrayList<>();
         if (dto.getRole().equals("Admin") || dto.getRole().equals("Finance")) {
+
             query = String.format(
-                    "Recipients as r left join Partners as p on r.partnersyskey = p.syskey WHERE r.recordstatus <> 4 %s %s and (%s)",
-                    getFilterQuery(dto), getDoseCondition(dto), searchQuery);
+                    "Recipients as r left join Partners as p on r.partnersyskey = p.syskey WHERE r.recordstatus <> 4 %s %s %s and (%s)",
+                    getFilterQuery(dto), getDoseCondition(dto),
+                    !dto.getVoidstatus().isEmpty() ? "and voidstatus = " + dto.getVoidstatus() : "", searchQuery);
             datalist = new EasySql(DbFactory.getConnection()).getMany(keys, query, "cid", true, dto.getCurrentpage(),
                     dto.getPagesize(),
                     dto.getPartnersyskey().isEmpty() ? new ArrayList<>() : Arrays.asList(dto.getPartnersyskey()));
         } else {
             query = String.format(
-                    "Recipients as r left join Partners as p on r.partnersyskey = p.syskey WHERE r.recordstatus <> 4 AND r.partnersyskey = ? %s %s and (%s)",
+                    "Recipients as r left join Partners as p on r.partnersyskey = p.syskey WHERE r.recordstatus <> 4 AND r.partnersyskey = ? %s %s %s and (%s)",
                     !dto.getCenterid().isEmpty() ? "and cid like " + "'" + dto.getCenterid() + "%'" : "",
-                    getDoseCondition(dto), searchQuery);
+                    getDoseCondition(dto),
+                    !dto.getVoidstatus().isEmpty() ? "and voidstatus = " + dto.getVoidstatus() : "", searchQuery);
             datalist = new EasySql(DbFactory.getConnection()).getMany(keys, query, "cid", true, dto.getCurrentpage(),
                     dto.getPagesize(), Arrays.asList(dto.getPartnersyskey()));
         }
@@ -298,5 +303,39 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         return getDBClient().getMany(
                 Arrays.asList("cl.cid", "firstdosedate", "firstdosetime", "seconddosetime", "centername"),
                 "CenterLastSerials as cl left join Recipients as r on r.cid = cl.cid left join Centers as c on c.centerid = cl.centerid where cl.centerid = 'YGN1'");
+    }
+
+    public List<Map<String, Object>> getSummary() throws SQLException {
+
+        List<Map<String, Object>> datalist = getDBClient().getMany(
+                Arrays.asList("cl.cid", "c.centerid", "firstdosedate", "firstdosetime", "seconddosetime", "centername"),
+                "CenterLastSerials as cl left join Recipients as r on r.cid = cl.cid left join Centers as c on c.centerid = cl.centerid");
+
+        for (Map<String, Object> data : datalist) {
+            // data.put("cards", getTotalCount("Recipients where cid like '" +
+            // data.get("centerid") + "%'"));
+            // data.put("cards", Integer.parseInt(((String)
+            // data.get("cid")).replaceAll("^([a-zA-Z]{1,3}[0-9])", "")));
+            data.put("cards", Cid.getNumberFromCid((String) data.get("cid")));
+            // data.put("picount",
+            // getTotalCount("ProformaInvoice where centerid = ?",
+            // Arrays.asList(data.get("centerid"))));
+            // data.put("batchcount", getTotalCount(
+            // "BatchUpload as b left join ProformaInvoice as pi on b.pisyskey = pi.syskey
+            // where pi.centerid = ?",
+            // Arrays.asList(data.get("centerid"))));
+            // data.put("partnercount", getTotalCount(
+            // "Partners as p left join ProformaInvoice as pi on p.syskey = pi.partnersyskey
+            // where pi.centerid = ?",
+            // Arrays.asList(data.get("centerid"))));
+
+        }
+        return datalist;
+    }
+
+    public List<Map<String, Object>> getRecipients(ReportDto dto) throws SQLException {
+        return getDBClient().getMany(dto.getColumns(), String
+                .format("Recipients where centerid like %s and partnersyskey = ?", "'" + dto.getCenterid() + "%'"),
+                Arrays.asList(dto.getPartnersyskey()));
     }
 }

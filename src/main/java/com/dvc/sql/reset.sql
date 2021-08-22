@@ -10,3 +10,5 @@ TRUNCATE TABLE UserHistory;
 TRUNCATE TABLE VaccinationRecord;
 TRUNCATE TABLE PostAttachmentFiles;
 -- TRUNCATE TABLE Centers;
+
+update Recipients set dose = 0, t10 = ''

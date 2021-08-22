@@ -78,6 +78,12 @@ public class SubmitBatch {
 
             List<Map<String, Object>> validdatalist = dao.getBatchDetailsByHeader(Long.parseLong(syskey), 1);
 
+            if (validdatalist.size() == 0) {
+                res.setRetcode(ServerStatus.INVALID_REQUEST);
+                res.setRetmessage("No valid records");
+                return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(res).build();
+            }
+
             if (validdatalist.size() > Integer.parseInt((String) pi.get("balance"))
                     + Integer.parseInt((String) pi.get("voidcount"))) {
                 res.setRetcode(ServerStatus.UNAUTHORIZED);

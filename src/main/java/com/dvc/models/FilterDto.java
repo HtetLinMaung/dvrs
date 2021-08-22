@@ -15,8 +15,27 @@ public class FilterDto extends BaseDto {
     private int operator; // 0 => = , 1 => >
     private boolean alldose;
 
+    private String voidstatus = "";
+    private String recordstatus = "";
+
     public int getDosecount() {
         return dosecount;
+    }
+
+    public String getRecordstatus() {
+        return recordstatus;
+    }
+
+    public void setRecordstatus(String recordstatus) {
+        this.recordstatus = recordstatus;
+    }
+
+    public String getVoidstatus() {
+        return voidstatus;
+    }
+
+    public void setVoidstatus(String voidstatus) {
+        this.voidstatus = voidstatus;
     }
 
     public void setDosecount(int dosecount) {

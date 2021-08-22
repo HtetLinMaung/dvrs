@@ -9,6 +9,7 @@ import com.dvc.factory.DbFactory;
 import com.dvc.models.BaseResponse;
 import com.dvc.models.CheckQRDto;
 import com.dvc.models.CheckQRResponse;
+import com.dvc.utils.Cid;
 import com.dvc.utils.EasySql;
 import com.dvc.utils.QRNewUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -78,7 +79,7 @@ public class CheckQRToken {
                     } else {
                         rData.put("Void", "false-mark");
                     }
-                    rData.put("CID", cardid);
+                    rData.put("CID " + (System.getenv("ICODE").equals("VRS") ? "(VRS)" : "(VRS UAT)"), cardid);
                     rData.put("Name", recipient.get("recipientsname"));
                     rData.put("NRC/PP", ic);
                     if (recipient.get("dob") != null) {
@@ -99,22 +100,23 @@ public class CheckQRToken {
                     } else {
                         rData.put("Void", "false-mark");
                     }
-
-                    if (new CenterDao().isCenterValid(dto.getUserid().split("-")[0])
-                            && cardid.toLowerCase().startsWith(dto.getUserid().split("-")[0])) {
+                    if (Cid.getCenterFromCid(cardid).toLowerCase().equals(dto.getUserid().split("-")[0])
+                            || (Cid.getCenterFromCid(cardid).equals("YGN")
+                                    && dto.getUserid().split("-")[0].startsWith("ygn1"))) {
                         rData.put("Correct Center", "true-mark");
                     } else {
                         rData.put("Incorrect Center", "false-mark");
                     }
                     if (recipient.get("voidstatus").equals("1")
-                            && new CenterDao().isCenterValid(dto.getUserid().split("-")[0])
-                            && cardid.toLowerCase().startsWith(dto.getUserid().split("-")[0]) && num >= 50
-                            && num <= 99) {
+                            && (Cid.getCenterFromCid(cardid).toLowerCase().equals(dto.getUserid().split("-")[0])
+                                    || (Cid.getCenterFromCid(cardid).equals("YGN")
+                                            && dto.getUserid().split("-")[0].startsWith("ygn1")))
+                            && num >= 50 && num <= 99) {
                         rData.put("BTN-Update Dose " + String.valueOf(dose + 1), System.getenv("UPDATE_DOSE_URL")
                                 + "/updatedose?token=" + dto.getYtoken() + "&userid=" + dto.getUserid());
                     }
 
-                    rData.put("CID", cardid);
+                    rData.put("CID " + (System.getenv("ICODE").equals("VRS") ? "(VRS)" : "(VRS UAT)"), cardid);
                     rData.put("Name", recipient.get("recipientsname"));
                     if (num >= 1 && num <= 99) {
                         rData.put("NRC/PP", ic);
@@ -128,9 +130,10 @@ public class CheckQRToken {
                     }
 
                     if (recipient.get("voidstatus").equals("1")
-                            && new CenterDao().isCenterValid(dto.getUserid().split("-")[0])
-                            && cardid.toLowerCase().startsWith(dto.getUserid().split("-")[0]) && num >= 50
-                            && num <= 99) {
+                            && (Cid.getCenterFromCid(cardid).toLowerCase().equals(dto.getUserid().split("-")[0])
+                                    || (Cid.getCenterFromCid(cardid).equals("YGN")
+                                            && dto.getUserid().split("-")[0].startsWith("ygn1")))
+                            && num >= 50 && num <= 99) {
                         rData.put("TXT-1", "Lot No.");
                         rData.put("TXT-2", "Doctor/Nurse");
                         rData.put("TXT-3", "Remark");
@@ -145,7 +148,7 @@ public class CheckQRToken {
                     } else {
                         rData.put("Void", "false-mark");
                     }
-                    rData.put("CID", cardid);
+                    rData.put("CID " + (System.getenv("ICODE").equals("VRS") ? "(VRS)" : "(VRS UAT)"), cardid);
                     rData.put("Name", recipient.get("recipientsname"));
                 } else if (dto.getUserid().matches("admin-(.*)@vrs")) {
                     if (recipient.get("voidstatus").equals("1")) {
@@ -156,7 +159,7 @@ public class CheckQRToken {
                     }
                     rData.put("BTN-Update Dose " + String.valueOf(dose + 1), System.getenv("UPDATE_DOSE_URL")
                             + "/updatedose?token=" + dto.getYtoken() + "&userid=" + dto.getUserid());
-                    rData.put("CID", cardid);
+                    rData.put("CID " + (System.getenv("ICODE").equals("VRS") ? "(VRS)" : "(VRS UAT)"), cardid);
                     rData.put("Name", recipient.get("recipientsname"));
                     rData.put("NRC/PP", ic);
                     if (recipient.get("dob") != null) {
