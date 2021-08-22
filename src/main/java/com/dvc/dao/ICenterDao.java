@@ -10,7 +10,7 @@ import com.dvc.models.FilterDto;
 import com.dvc.models.PaginationResponse;
 
 public interface ICenterDao {
-    List<Map<String, Object>> getCenters() throws SQLException;
+    List<Map<String, Object>> getCenters(String role) throws SQLException;
 
     List<String> addLastSerial(String centerid, int count) throws SQLException;
 

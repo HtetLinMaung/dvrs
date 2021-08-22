@@ -24,9 +24,9 @@ import com.dvc.utils.KeyGenerator;
 public class CenterDao extends BaseDao implements ICenterDao {
 
     @Override
-    public List<Map<String, Object>> getCenters() throws SQLException {
+    public List<Map<String, Object>> getCenters(String role) throws SQLException {
         return getDBClient().getMany(Arrays.asList("centerid", "centername", "allowblank", "price"),
-                "Centers where recordstatus <> 4");
+                "Centers where recordstatus  " + (role.equals("Partner") ? "= 1" : " <> 4"));
     }
 
     private String sum(List<String> datalist) {
