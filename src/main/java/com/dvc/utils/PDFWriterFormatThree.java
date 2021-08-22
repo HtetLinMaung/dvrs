@@ -124,7 +124,7 @@ public class PDFWriterFormatThree implements PDFWriter {
 			} else {
 				firstbodytable.addCell(new PDFUtil().writePDFCell(
 						new PDFUtil().convertString(rdata.getAge() + "", "Myanmar3", "Zawgyi_One")
-								+ new PDFUtil().convertString("           နှစ်", "Myanmar3", "Zawgyi_One"),
+								+ new PDFUtil().convertString("    နှစ်", "Myanmar3", "Zawgyi_One"),
 						fontb, -1, -1, 0, 0.5f, 0, -1f));
 			}
 
