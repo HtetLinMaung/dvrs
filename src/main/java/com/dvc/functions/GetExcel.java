@@ -29,7 +29,7 @@ public class GetExcel {
         String name = request.getBody().orElse(query);
         String url = "";
         try {
-            url = "https://dvrs.blob.core.windows.net/dvrsuploads/7675a696-6179-4401-b478-4eb4a9ef6aa7_M-10000036-B0011?"
+            url = "https://dvrs.blob.core.windows.net/dvrsuploads/aaf63436-e6b9-442f-83a9-2342d682ebfb_M-DVRSUploadTemplate-V1?"
 
                     + AzureBlobUtils.getSasToken();
         } catch (InvalidKeyException | URISyntaxException | StorageException e) {

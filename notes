@@ -1,1 +1,85 @@
 1. Insert YGN center in prod
+
+
+@Override
+    public PaginationResponse<Map<String, Object>> getPis(FilterDto dto) throws SQLException, IOException {
+        String searchQuery = EasySql.generateSearchQuery(
+                Arrays.asList("pirefnumber", "paymentref", "bankname", "p.centerid"), dto.getSearch());
+        if (dto.getSearch().isEmpty()) {
+            searchQuery = "1 = 1";
+        }
+        List<String> keys = new EasyData<PIDto>(new PIDto()).toMapExcept(
+                Arrays.asList("batchsyskey", "statustype", "syskey", "remark", "centerid", "recordstatus", "price",
+                        "branch", "total", "contact", "paymentstatus", "applicantcount", "attention", "taxamount"))
+                .entrySet().stream().map(pair -> pair.getKey()).collect(Collectors.toList());
+        keys.add("p.syskey");
+        keys.add("centername");
+        keys.add("partnername");
+        keys.add("p.centerid");
+        keys.add("p.recordstatus");
+        keys.add("partnerid");
+        keys.add("balance");
+        keys.add("voidcount");
+
+        String query = "";
+        List<Map<String, Object>> datalist = new ArrayList<>();
+        if (dto.getRole().equals("Admin") || dto.getRole().equals("Finance")) {
+            query = String.format(
+                    "ProformaInvoice as p left join Centers as c on c.centerid = p.centerid left join Partners as pr on pr.syskey = p.partnersyskey WHERE p.recordstatus <> 4 %s %s %s and (%s)",
+                    dto.getPartnersyskey().isEmpty() ? "" : "and partnersyskey = ?",
+                    dto.getCenterid().isEmpty() ? "" : "and centerid = '" + dto.getCenterid() + "'",
+                    dto.getRecordstatus().isEmpty() ? "" : "and recordstatus = " + dto.getRecordstatus(), searchQuery);
+            datalist = new EasySql(DbFactory.getConnection()).getMany(keys, query, "pirefnumber", true,
+                    dto.getCurrentpage(), dto.getPagesize(),
+                    dto.getPartnersyskey().isEmpty() ? new ArrayList<>() : Arrays.asList(dto.getPartnersyskey()));
+        } else {
+            query = String.format(
+                    "ProformaInvoice as p left join Centers as c on c.centerid = p.centerid left join Partners as pr on pr.syskey = p.partnersyskey WHERE p.recordstatus <> 4 AND p.partnersyskey = ? %s %s and (%s)",
+                    dto.getCenterid().isEmpty() ? "" : "and centerid = '" + dto.getCenterid() + "'",
+                    dto.getRecordstatus().isEmpty() ? "" : "and recordstatus = " + dto.getRecordstatus(), searchQuery);
+            datalist = new EasySql(DbFactory.getConnection()).getMany(keys, query, "pirefnumber", true,
+                    dto.getCurrentpage(), dto.getPagesize(), Arrays.asList(dto.getPartnersyskey()));
+        }
+
+        PaginationResponse<Map<String, Object>> res = new PaginationResponse<>();
+        res.setDatalist(datalist.stream().map(m -> {
+            // try {
+            // int currentcount = getTotalCount("Recipients where pisyskey = ? and
+            // batchuploadsyskey <> 0",
+            // Arrays.asList(Long.parseLong((String) m.get("syskey"))));
+            // int qty = Integer.parseInt((String) m.get("qty"));
+            // int remaining = qty - currentcount;
+            // if (remaining < 0) {
+            // remaining = 0;
+            // }
+            // m.put("balance", remaining);
+            // } catch (Exception e) {
+            // // TODO Auto-generated catch block
+            // e.printStackTrace();
+            // }
+            m.put("balance", String.valueOf(
+                    Integer.parseInt((String) m.get("voidcount")) + Integer.parseInt((String) m.get("balance"))));
+            m.put("recordstatusdesc", m.get("recordstatus").equals("30") ? "Approved" : "Submitted");
+            // String paymentdesc = "-";
+            // switch ((String) m.get("paymentstatus")) {
+            // case "1":
+            // paymentdesc = "Processing";
+            // break;
+            // case "10":
+            // paymentdesc = "Paid";
+            // break;
+            // }
+            // m.remove("paymentstatus");
+            // m.put("paymentdesc", paymentdesc);
+            return m;
+        }).collect(Collectors.toList()));
+        res.setPagesize(dto.getPagesize());
+        res.setCurrentpage(dto.getCurrentpage());
+        res.setPagecount((int) Math.ceil((double) getTotalCount(query,
+                !dto.getRole().equals("Admin") && !dto.getRole().equals("Finance")
+                        ? Arrays.asList(dto.getPartnersyskey())
+                        : dto.getPartnersyskey().isEmpty() ? new ArrayList<>() : Arrays.asList(dto.getPartnersyskey()))
+                / (double) dto.getPagesize()));
+        res.setTotalcount(datalist.size());
+        return res;
+    }

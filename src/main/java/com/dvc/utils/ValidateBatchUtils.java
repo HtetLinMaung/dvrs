@@ -62,6 +62,11 @@ public class ValidateBatchUtils {
         int month = Integer.parseInt(dobarr[1]);
         LocalDate l;
         try {
+            if (year >= 1300 && year < 1900) {
+                year += 638;
+            } else if (year < 1300) {
+                return 0;
+            }
             if (month > 12) {
                 l = LocalDate.of(year, day, month);
             } else {
