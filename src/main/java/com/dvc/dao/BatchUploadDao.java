@@ -268,9 +268,10 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                         // dob.split("/")[2] + String.format("%02d",
                         // Integer.parseInt(dob.split("/")[1]))
                         // + String.format("%02d", Integer.parseInt(dob.split("/")[0])));
-                        int dobyear = Integer.parseInt(dob.split("/")[2]);
-                        int year = LocalDate.now().getYear();
-                        recipient.put("age", year - dobyear);
+                        // int dobyear = Integer.parseInt(dob.split("/")[2]);
+                        // int year = LocalDate.now().getYear();
+                        recipient.put("age", ValidateBatchUtils.getAge(dob));
+
                     }
 
                     recipient.put("batchuploadsyskey", dto.getBatchsyskey());
