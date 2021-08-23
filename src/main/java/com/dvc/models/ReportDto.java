@@ -7,6 +7,33 @@ public class ReportDto {
     private String centerid;
     private String partnersyskey;
     private boolean all;
+    private int dosecount;
+    private int operator;
+    private String role;
+
+    public int getDosecount() {
+        return dosecount;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public void setDosecount(int dosecount) {
+        this.dosecount = dosecount;
+    }
+
+    public int getOperator() {
+        return operator;
+    }
+
+    public void setOperator(int operator) {
+        this.operator = operator;
+    }
 
     public List<String> getColumns() {
         return columns;

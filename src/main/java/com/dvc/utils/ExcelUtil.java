@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -217,7 +218,8 @@ public class ExcelUtil {
         }
     }
 
-    public static byte[] writeExcel(List<Map<String, Object>> datalist, String sheetname) throws IOException {
+    public static ByteArrayOutputStream writeExcel(List<LinkedHashMap<String, Object>> datalist, String sheetname)
+            throws IOException {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet(sheetname);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -225,6 +227,7 @@ public class ExcelUtil {
             List<String> keys = datalist.get(0).entrySet().stream().map(p -> p.getKey()).collect(Collectors.toList());
             int i = 0;
             Row row = sheet.createRow(i++);
+
             int j = 0;
             for (String key : keys) {
                 Cell cell = row.createCell(j++);
@@ -232,7 +235,8 @@ public class ExcelUtil {
             }
             for (Map<String, Object> data : datalist) {
                 j = 0;
-                row = sheet.createRow(i++);
+                row = sheet.createRow(i);
+                sheet.setColumnWidth(i++, 25 * 256);
                 for (String key : keys) {
                     Cell cell = row.createCell(j++);
                     cell.setCellValue((String) data.get(key));
@@ -241,6 +245,6 @@ public class ExcelUtil {
             workbook.write(out);
             workbook.close();
         }
-        return out.toByteArray();
+        return out;
     }
 }

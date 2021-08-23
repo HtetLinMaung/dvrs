@@ -5,13 +5,20 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import com.dvc.factory.DbFactory;
 import com.dvc.models.FilterDto;
@@ -351,9 +358,52 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         return datalist;
     }
 
-    public List<Map<String, Object>> getRecipients(ReportDto dto) throws SQLException {
-        return getDBClient().getMany(dto.getColumns(), String
-                .format("Recipients where centerid like %s and partnersyskey = ?", "'" + dto.getCenterid() + "%'"),
-                Arrays.asList(dto.getPartnersyskey()));
+    public List<LinkedHashMap<String, Object>> getRecipients(ReportDto dto) throws SQLException {
+        String condition = "";
+        if (dto.getOperator() == 0) {
+            condition += "=";
+        } else if (dto.getOperator() == 1) {
+            condition += ">";
+        } else if (dto.getOperator() == -1) {
+            condition += "<";
+        }
+        List<String> keys = Arrays.asList("r.cid", "doseupdatetime", "lot", "doctor", "d.remark", "township", "r.dose");
+        List<Map<String, Object>> datalist = new ArrayList<>();
+        if (dto.getRole().equals("Partner")) {
+            datalist = getDBClient().getMany(keys, String.format(
+                    "Recipients as r left join DoseRecords as d on r.cid = d.cid where partnersyskey = ? and dose %s ?",
+                    condition), Arrays.asList(dto.getPartnersyskey(), dto.getDosecount()));
+        } else {
+            datalist = getDBClient().getMany(keys, String
+                    .format("Recipients as r left join DoseRecords as d on r.cid = d.cid where dose %s ?", condition),
+                    Arrays.asList(dto.getDosecount()));
+        }
+        return datalist.stream().map(m -> {
+            LinkedHashMap<String, Object> data = new LinkedHashMap<>();
+            data.put("CID", m.get("cid"));
+            data.put("Dose", m.get("dose"));
+            data.put("Lot No.", m.get("lot"));
+            data.put("Doctor/Nurse", m.get("doctor"));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            // Asia/Rangoon
+            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Rangoon"));
+            try {
+                SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+                parser.setTimeZone(TimeZone.getTimeZone("UTC"));
+                Date parsed = parser.parse((String) m.get("doseupdatetime"));
+
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
+
+                data.put("1st Dose Date", formatter.format(parsed));
+                data.put("2nd Dose Date", "");
+            } catch (ParseException e) {
+
+                e.printStackTrace();
+            }
+            data.put("Township", m.get("township"));
+            data.put("Remark", m.get("remark"));
+            return data;
+        }).collect(Collectors.toList());
+
     }
 }

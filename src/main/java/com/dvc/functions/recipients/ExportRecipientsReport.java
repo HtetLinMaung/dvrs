@@ -1,6 +1,7 @@
 package com.dvc.functions.recipients;
 
-import java.time.Instant;
+import java.io.ByteArrayOutputStream;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -14,6 +15,8 @@ import com.dvc.models.BaseResponse;
 import com.dvc.models.MiddlewareData;
 import com.dvc.models.ReportDto;
 import com.dvc.models.TokenData;
+import com.dvc.utils.AzureBlobUtils;
+import com.dvc.utils.EasyData;
 import com.dvc.utils.ExcelUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.functions.ExecutionContext;
@@ -51,13 +54,15 @@ public class ExportRecipientsReport {
             if (tokenData.getRole().equals("Partner")) {
                 dto.setPartnersyskey(tokenData.getPartnersyskey());
             }
-            List<Map<String, Object>> datalist = new RecipientsDao().getRecipients(dto);
-            byte[] byteArr = ExcelUtil.writeExcel(datalist, "Sheet1");
-            return request
-                    .createResponseBuilder(HttpStatus.OK).header("Content-Disposition", String
-                            .format("attachment;filename=\"%s.xls\"", UUID.randomUUID().toString() + "-" + "report"))
-                    .body(byteArr).build();
+            dto.setRole(tokenData.getRole());
+            List<LinkedHashMap<String, Object>> datalist = new RecipientsDao().getRecipients(dto);
 
+            ByteArrayOutputStream out = ExcelUtil.writeExcel(datalist, "Sheet1");
+            String url = AzureBlobUtils.createBlob(out, UUID.randomUUID().toString() + "-" + "dose_report.xls");
+            url += "?" + AzureBlobUtils.getSasToken();
+            Map<String, Object> res = new EasyData<BaseResponse>(new BaseResponse()).toMap();
+            res.put("url", url);
+            return request.createResponseBuilder(HttpStatus.OK).body(res).build();
         } catch (Exception e) {
             context.getLogger().severe(e.getMessage());
             BaseResponse res = new BaseResponse();
