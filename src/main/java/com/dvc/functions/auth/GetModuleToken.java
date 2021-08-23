@@ -80,6 +80,7 @@ public class GetModuleToken {
             res.setBtoken(btoken);
             res.setPartnername((String) payload.get("partnername"));
             res.setRole("Partner".equals((String) payload.get("role")) ? "" : (String) payload.get("role"));
+            res.setPartnerid((String) payload.get("partnerid"));
             res.setRetcode(ServerStatus.SUCCESS);
             res.setRetmessage(ServerMessage.SUCCESS);
 

@@ -4,9 +4,18 @@ public class ModuleTokenResponse extends BaseResponse {
     private String btoken;
     private String role;
     private String partnername;
+    private String partnerid;
 
     public String getRole() {
         return role;
+    }
+
+    public String getPartnerid() {
+        return partnerid;
+    }
+
+    public void setPartnerid(String partnerid) {
+        this.partnerid = partnerid;
     }
 
     public void setRole(String role) {
