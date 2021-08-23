@@ -139,14 +139,19 @@ public class PIDao extends BaseDao implements IPIDao {
         List<Map<String, Object>> datalist = new ArrayList<>();
         if (dto.getRole().equals("Admin") || dto.getRole().equals("Finance")) {
             query = String.format(
-                    "ProformaInvoice as p left join Centers as c on c.centerid = p.centerid left join Partners as pr on pr.syskey = p.partnersyskey WHERE p.recordstatus <> 4 %s and (%s)",
-                    dto.getPartnersyskey().isEmpty() ? "" : "and partnersyskey = ?", searchQuery);
+                    "ProformaInvoice as p left join Centers as c on c.centerid = p.centerid left join Partners as pr on pr.syskey = p.partnersyskey WHERE p.recordstatus <> 4 %s %s %s and (%s)",
+                    dto.getPartnersyskey().isEmpty() ? "" : "and partnersyskey = ?",
+                    dto.getCenterid().isEmpty() ? "" : "and p.centerid = '" + dto.getCenterid() + "'",
+                    dto.getRecordstatus().isEmpty() ? "" : "and p.recordstatus = " + dto.getRecordstatus(),
+                    searchQuery);
             datalist = new EasySql(DbFactory.getConnection()).getMany(keys, query, "pirefnumber", true,
                     dto.getCurrentpage(), dto.getPagesize(),
                     dto.getPartnersyskey().isEmpty() ? new ArrayList<>() : Arrays.asList(dto.getPartnersyskey()));
         } else {
             query = String.format(
-                    "ProformaInvoice as p left join Centers as c on c.centerid = p.centerid left join Partners as pr on pr.syskey = p.partnersyskey WHERE p.recordstatus <> 4 AND p.partnersyskey = ? and (%s)",
+                    "ProformaInvoice as p left join Centers as c on c.centerid = p.centerid left join Partners as pr on pr.syskey = p.partnersyskey WHERE p.recordstatus <> 4 AND p.partnersyskey = ? %s %s and (%s)",
+                    dto.getCenterid().isEmpty() ? "" : "and p.centerid = '" + dto.getCenterid() + "'",
+                    dto.getRecordstatus().isEmpty() ? "" : "and p.recordstatus = " + dto.getRecordstatus(),
                     searchQuery);
             datalist = new EasySql(DbFactory.getConnection()).getMany(keys, query, "pirefnumber", true,
                     dto.getCurrentpage(), dto.getPagesize(), Arrays.asList(dto.getPartnersyskey()));
