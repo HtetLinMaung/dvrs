@@ -367,7 +367,13 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         } else if (dto.getOperator() == -1) {
             condition += "<";
         }
-        List<String> keys = Arrays.asList("r.cid", "doseupdatetime", "lot", "doctor", "d.remark", "township", "r.dose");
+        // "recipientsname", "fathername", "gender",
+        // "dob", "age", "nric", "passport", "nationality", "organization", "address1",
+        // "township", "division",
+        // "mobilephone"
+        List<String> keys = Arrays.asList("r.cid", "doseupdatetime", "lot", "doctor", "d.remark", "r.dose",
+                "recipientsname", "gender", "fathername", "dob", "nric", "age", "passport", "organization",
+                "nationality", "division", "township", "mobilephone", "address1");
         List<Map<String, Object>> datalist = new ArrayList<>();
         if (dto.getRole().equals("Partner")) {
             datalist = getDBClient().getMany(keys, String.format(
@@ -381,6 +387,16 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         return datalist.stream().map(m -> {
             LinkedHashMap<String, Object> data = new LinkedHashMap<>();
             data.put("CID", m.get("cid"));
+            data.put("Name", m.get("recipientsname"));
+            data.put("Sex", m.get("gender"));
+            data.put("Father's Name", m.get("fathername"));
+            data.put("DOB", m.get("dob"));
+            data.put("NRC", m.get("nric"));
+            data.put("Passport", m.get("passport"));
+            data.put("Organization", m.get("organization"));
+            data.put("Mobile", m.get("mobilephone"));
+            data.put("State/Region", m.get("division"));
+            data.put("Address", m.get("address1"));
             data.put("Dose", m.get("dose"));
             data.put("Lot No.", m.get("lot"));
             data.put("Doctor/Nurse", m.get("doctor"));
