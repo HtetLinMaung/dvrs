@@ -116,7 +116,12 @@ public class ExcelUtil {
         for (int cn = 0; cn < row.getLastCellNum(); cn++) {
             Cell cell = row.getCell(cn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
             if (j < headers.size()) {
-                map.put(headers.get(j), String.valueOf(getCellValue(cell, workbook)));
+                try {
+                    map.put(headers.get(j), String.valueOf(getCellValue(cell, workbook)));
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                    map.put(headers.get(j), "");
+                }
             }
             j++;
         }
@@ -167,12 +172,18 @@ public class ExcelUtil {
 
                     Cell cell = row.getCell(cn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
 
-                    if (!getCellValue(cell).isEmpty()) {
-                        isempty = false;
-                    }
-                    if (j < headers.size()) {
-
-                        map.put(headers.get(j), getCellValue(cell, workbook));
+                    try {
+                        if (!getCellValue(cell).isEmpty()) {
+                            isempty = false;
+                        }
+                        if (j < headers.size()) {
+                            map.put(headers.get(j), getCellValue(cell, workbook));
+                        }
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                        if (j < headers.size()) {
+                            map.put(headers.get(j), "");
+                        }
                     }
                     j++;
                 }
@@ -182,7 +193,7 @@ public class ExcelUtil {
                 }
                 if (!isempty) {
                     datalist.add(map);
-                    System.out.println("Processing row " + String.valueOf(i + 1));
+                    System.out.println("Processing row " + String.valueOf(i));
                 } else {
                     break;
                 }
