@@ -488,8 +488,10 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
     }
 
     public boolean isDoseUpdated(String cid) throws SQLException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        String date = formatter.format(LocalDate.now());
         int total = getTotalCount("DoseRecords where cid = ? and DATEDIFF(day, doseupdatetime, ?) = 0",
-                Arrays.asList(cid, Instant.now().toString()));
+                Arrays.asList(cid, date));
         if (total > 0) {
             return true;
         }
