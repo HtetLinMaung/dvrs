@@ -352,11 +352,18 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
                 "CenterLastSerials as cl left join Recipients as r on r.cid = cl.cid left join Centers as c on c.centerid = cl.centerid where cl.centerid = 'YGN1'");
     }
 
-    public List<Map<String, Object>> getSummary() throws SQLException {
-
-        List<Map<String, Object>> datalist = getDBClient().getMany(
-                Arrays.asList("cl.cid", "c.centerid", "firstdosedate", "firstdosetime", "seconddosetime", "centername"),
-                "CenterLastSerials as cl left join Recipients as r on r.cid = cl.cid left join Centers as c on c.centerid = cl.centerid");
+    public List<Map<String, Object>> getSummary(String role, String partnersyskey) throws SQLException {
+        List<String> keys = Arrays.asList("cl.cid", "c.centerid", "firstdosedate", "firstdosetime", "seconddosetime",
+                "centername");
+        List<Map<String, Object>> datalist = new ArrayList<>();
+        if (role.equals("Partner")) {
+            datalist = getDBClient().getMany(keys,
+                    "CenterLastSerials as cl left join Recipients as r on r.cid = cl.cid left join Centers as c on c.centerid = cl.centerid where r.partnersyskey = ?",
+                    Arrays.asList(partnersyskey));
+        } else {
+            datalist = getDBClient().getMany(keys,
+                    "CenterLastSerials as cl left join Recipients as r on r.cid = cl.cid left join Centers as c on c.centerid = cl.centerid");
+        }
 
         for (Map<String, Object> data : datalist) {
             // data.put("cards", getTotalCount("Recipients where cid like '" +

@@ -40,7 +40,8 @@ public class GetSummary {
             if (!auth.isSuccess()) {
                 return auth.getResponse();
             }
-            List<Map<String, Object>> datalist = new RecipientsDao().getSummary();
+            List<Map<String, Object>> datalist = new RecipientsDao().getSummary(auth.getTokenData().getRole(),
+                    auth.getTokenData().getPartnersyskey());
 
             Map<String, Object> res = new EasyData<BaseResponse>(new BaseResponse()).toMap();
             res.put("datalist", datalist);
