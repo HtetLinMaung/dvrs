@@ -358,7 +358,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         List<Map<String, Object>> datalist = new ArrayList<>();
         if (role.equals("Partner")) {
             datalist = getDBClient().getMany(keys,
-                    "CenterLastSerials as cl left join Recipients as r on r.cid = cl.cid left join Centers as c on c.centerid = cl.centerid where r.partnersyskey = ?",
+                    "CenterLastSerials as cl left join Recipients as r on r.cid = cl.cid left join Centers as c on c.centerid = cl.centerid where cl.centerid in (select centerid from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi on r.pisyskey = pi.syskey where r.partnersyskey = ? group by pi.centerid)",
                     Arrays.asList(partnersyskey));
         } else {
             datalist = getDBClient().getMany(keys,
