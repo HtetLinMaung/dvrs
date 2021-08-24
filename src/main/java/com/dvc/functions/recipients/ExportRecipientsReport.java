@@ -92,7 +92,6 @@ public class ExportRecipientsReport {
                     data.put("1st Dose Date", formatter.format(parsed) + " " + (String) m.get("userid"));
                     data.put("2nd Dose Date", "");
                 } catch (ParseException e) {
-
                     e.printStackTrace();
                 }
                 data.put("Township", m.get("township"));
