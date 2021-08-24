@@ -58,7 +58,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
 
     @Override
     public PaginationResponse<Map<String, Object>> getRecipients(FilterDto dto) throws SQLException {
-        String searchQuery = EasySql.generateSearchQuery(Arrays.asList("cid", "recipientsname", "nric"),
+        String searchQuery = EasySql.generateSearchQuery(Arrays.asList("r.cid", "recipientsname", "nric", "township"),
                 dto.getSearch());
         if (dto.getSearch().isEmpty()) {
             searchQuery = "1 = 1";
