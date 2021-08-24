@@ -5,6 +5,7 @@ import com.microsoft.azure.functions.annotation.*;
 import com.dvc.constants.ServerMessage;
 import com.dvc.constants.ServerStatus;
 import com.dvc.dao.CenterDao;
+import com.dvc.dao.RecipientsDao;
 import com.dvc.factory.DbFactory;
 import com.dvc.models.BaseResponse;
 import com.dvc.models.CheckQRDto;
@@ -112,8 +113,13 @@ public class CheckQRToken {
                                     || (Cid.getCenterFromCid(cardid).equals("YGN")
                                             && dto.getUserid().split("-")[0].startsWith("ygn1")))
                             && num >= 50 && num <= 99) {
-                        rData.put("BTN-Update Dose " + String.valueOf(dose + 1), System.getenv("UPDATE_DOSE_URL")
-                                + "/updatedose?token=" + dto.getYtoken() + "&userid=" + dto.getUserid());
+                        // rData.put("BTN-Update Dose " + String.valueOf(dose + 1),
+                        // System.getenv("UPDATE_DOSE_URL")
+                        // + "/updatedose?token=" + dto.getYtoken() + "&userid=" + dto.getUserid());
+                        if (!new RecipientsDao().isDoseUpdated(cardid)) {
+                            rData.put("BTN-Update Dose " + String.valueOf(dose + 1), System.getenv("UPDATE_DOSE_URL")
+                                    + "/updatedose?token=" + dto.getYtoken() + "&userid=" + dto.getUserid());
+                        }
                     }
 
                     rData.put("CID " + (System.getenv("ICODE").equals("VRS") ? "(VRS)" : "(VRS UAT)"), cardid);
@@ -157,8 +163,11 @@ public class CheckQRToken {
                     } else {
                         rData.put("Void", "false-mark");
                     }
-                    rData.put("BTN-Update Dose " + String.valueOf(dose + 1), System.getenv("UPDATE_DOSE_URL")
-                            + "/updatedose?token=" + dto.getYtoken() + "&userid=" + dto.getUserid());
+                    if (!new RecipientsDao().isDoseUpdated(cardid)) {
+                        rData.put("BTN-Update Dose " + String.valueOf(dose + 1), System.getenv("UPDATE_DOSE_URL")
+                                + "/updatedose?token=" + dto.getYtoken() + "&userid=" + dto.getUserid());
+                    }
+
                     rData.put("CID " + (System.getenv("ICODE").equals("VRS") ? "(VRS)" : "(VRS UAT)"), cardid);
                     rData.put("Name", recipient.get("recipientsname"));
                     rData.put("NRC/PP", ic);

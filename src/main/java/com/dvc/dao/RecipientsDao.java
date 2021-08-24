@@ -36,9 +36,9 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         if (!dto.getPartnersyskey().isEmpty() && dto.getCenterid().isEmpty()) {
             return "and partnersyskey = ?";
         } else if (dto.getPartnersyskey().isEmpty() && !dto.getCenterid().isEmpty()) {
-            return "and cid like " + "'" + dto.getCenterid() + "%'";
+            return "and r.cid like " + "'" + dto.getCenterid() + "%'";
         } else if (!dto.getPartnersyskey().isEmpty() && !dto.getCenterid().isEmpty()) {
-            return "and cid like " + "'" + dto.getCenterid() + "%' and partnersyskey = ?";
+            return "and r.cid like " + "'" + dto.getCenterid() + "%' and partnersyskey = ?";
         }
         return "";
     }
@@ -98,7 +98,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
                     "Recipients as r left join Partners as p on r.partnersyskey = p.syskey %s WHERE r.recordstatus <> 4 AND r.partnersyskey = ? %s %s %s %s and (%s)",
                     dto.isAlldose() || (dto.getOperator() == 0 && dto.getDosecount() == 0) ? ""
                             : "left join DoseRecords as d on r.cid = d.cid",
-                    !dto.getCenterid().isEmpty() ? "and cid like " + "'" + dto.getCenterid() + "%'" : "",
+                    !dto.getCenterid().isEmpty() ? "and r.cid like " + "'" + dto.getCenterid() + "%'" : "",
                     getDoseCondition(dto),
                     !dto.getVoidstatus().isEmpty() ? "and voidstatus = " + dto.getVoidstatus() : "",
                     dto.isAlldose() || (dto.getOperator() == 0 && dto.getDosecount() == 0)
