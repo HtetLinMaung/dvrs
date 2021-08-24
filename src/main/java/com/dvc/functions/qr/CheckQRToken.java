@@ -1,10 +1,12 @@
 package com.dvc.functions.qr;
 
+import java.time.Instant;
 import java.util.*;
 import com.microsoft.azure.functions.annotation.*;
 import com.dvc.constants.ServerMessage;
 import com.dvc.constants.ServerStatus;
 import com.dvc.dao.CenterDao;
+import com.dvc.dao.LogDao;
 import com.dvc.dao.RecipientsDao;
 import com.dvc.factory.DbFactory;
 import com.dvc.models.BaseResponse;
@@ -12,6 +14,7 @@ import com.dvc.models.CheckQRDto;
 import com.dvc.models.CheckQRResponse;
 import com.dvc.utils.Cid;
 import com.dvc.utils.EasySql;
+import com.dvc.utils.KeyGenerator;
 import com.dvc.utils.QRNewUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.functions.*;
@@ -54,10 +57,6 @@ public class CheckQRToken {
             if ("url".equals(System.getenv("QR_ACTION"))) {
                 response.setUrl("https://vrs2021.registrationsystem.org/#/main/dvrs/wpacalls/token/" + cid);
             } else {
-                // 1-49 verify 50 -99 update
-                // YGN1-01 to 49
-                // YGN1-50 to 99
-
                 String nric = (String) recipient.get("nric");
                 String passport = (String) recipient.get("passport");
                 String ic = "";
@@ -186,7 +185,12 @@ public class CheckQRToken {
                     context.getLogger().info(dto.getYtoken());
 
                 }
-
+                Map<String, Object> log = new HashMap<>();
+                log.put("syskey", KeyGenerator.generateSyskey());
+                log.put("cid", cardid);
+                log.put("userid", dto.getUserid());
+                log.put("verifyat", Instant.now().toString());
+                new LogDao().addVerifyLog(log);
                 response.setData(rData);
             }
 
