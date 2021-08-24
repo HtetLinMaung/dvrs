@@ -89,8 +89,10 @@ public class ExportRecipientsReport {
 
                     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
 
-                    data.put("1st Dose Date", formatter.format(parsed) + " " + (String) m.get("userid"));
-                    data.put("2nd Dose Date", "");
+                    data.put("Dose Date", formatter.format(parsed) + " " + (String) m.get("userid"));
+                    // data.put("1st Dose Date", formatter.format(parsed) + " " + (String)
+                    // m.get("userid"));
+                    // data.put("2nd Dose Date", "");
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
