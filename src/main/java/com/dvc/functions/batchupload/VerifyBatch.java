@@ -174,7 +174,7 @@ public class VerifyBatch {
                 } catch (Exception e) {
                     break;
                 }
-                for (String key : Arrays.asList("serialno", "recipientsname")) {
+                for (String key : Arrays.asList("serialno", "recipientsname", "township")) {
                     // "nameicpp", "division", "township", "address1"
                     if (((String) data.get(key)).isEmpty()) {
                         isValid = false;
