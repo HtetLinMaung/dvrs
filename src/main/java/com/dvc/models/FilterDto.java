@@ -17,9 +17,18 @@ public class FilterDto extends BaseDto {
 
     private String voidstatus = "";
     private String recordstatus = "";
+    private String doseupdatedate = "";
 
     public int getDosecount() {
         return dosecount;
+    }
+
+    public String getDoseupdatedate() {
+        return doseupdatedate;
+    }
+
+    public void setDoseupdatedate(String doseupdatedate) {
+        this.doseupdatedate = doseupdatedate;
     }
 
     public String getRecordstatus() {

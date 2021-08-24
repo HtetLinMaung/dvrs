@@ -58,32 +58,53 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
 
     @Override
     public PaginationResponse<Map<String, Object>> getRecipients(FilterDto dto) throws SQLException {
-        String searchQuery = EasySql.generateSearchQuery(Arrays.asList("cid", "recipientsname", "nric"),
+        String searchQuery = EasySql.generateSearchQuery(Arrays.asList("cid", "recipientsname", "nric", "township"),
                 dto.getSearch());
         if (dto.getSearch().isEmpty()) {
             searchQuery = "1 = 1";
         }
-        List<String> keys = Arrays.asList("r.syskey", "rid", "cid", "recipientsname", "fathername", "dob", "age",
+        List<String> keys = Arrays.asList("r.syskey", "rid", "r.cid", "recipientsname", "fathername", "dob", "age",
                 "nric", "passport", "nationality", "organization", "township", "division", "mobilephone",
                 "registerationstatus", "vaccinationstatus", "batchrefcode", "partnername", "partnerid",
                 "r.partnersyskey", "voidstatus", "dose");
+        if (!(dto.isAlldose() || (dto.getOperator() == 0 && dto.getDosecount() == 0))) {
+            keys = Arrays.asList("r.syskey", "rid", "r.cid", "recipientsname", "fathername", "dob", "age", "nric",
+                    "passport", "nationality", "organization", "township", "division", "mobilephone",
+                    "registerationstatus", "vaccinationstatus", "batchrefcode", "partnername", "partnerid",
+                    "r.partnersyskey", "voidstatus", "dose", "doseupdatetime", "lot", "doctor", "d.remark", "d.userid");
+        }
+
         String query = "";
         List<Map<String, Object>> datalist = new ArrayList<>();
         if (dto.getRole().equals("Admin") || dto.getRole().equals("Finance")) {
 
             query = String.format(
-                    "Recipients as r left join Partners as p on r.partnersyskey = p.syskey WHERE r.recordstatus <> 4 %s %s %s and (%s)",
+                    "Recipients as r left join Partners as p on r.partnersyskey = p.syskey %s WHERE r.recordstatus <> 4 %s %s %s %s and (%s)",
+                    dto.isAlldose() || (dto.getOperator() == 0 && dto.getDosecount() == 0) ? ""
+                            : "left join DoseRecords as d on r.cid = d.cid",
                     getFilterQuery(dto), getDoseCondition(dto),
-                    !dto.getVoidstatus().isEmpty() ? "and voidstatus = " + dto.getVoidstatus() : "", searchQuery);
+                    !dto.getVoidstatus().isEmpty() ? "and voidstatus = " + dto.getVoidstatus() : "",
+                    dto.isAlldose() || (dto.getOperator() == 0 && dto.getDosecount() == 0)
+                            || dto.getDoseupdatedate().isEmpty() ? ""
+                                    : String.format("and DATEDIFF(day, doseupdatetime, '%s') = 0",
+                                            dto.getDoseupdatedate()),
+                    searchQuery);
             datalist = new EasySql(DbFactory.getConnection()).getMany(keys, query, "cid", true, dto.getCurrentpage(),
                     dto.getPagesize(),
                     dto.getPartnersyskey().isEmpty() ? new ArrayList<>() : Arrays.asList(dto.getPartnersyskey()));
         } else {
             query = String.format(
-                    "Recipients as r left join Partners as p on r.partnersyskey = p.syskey WHERE r.recordstatus <> 4 AND r.partnersyskey = ? %s %s %s and (%s)",
+                    "Recipients as r left join Partners as p on r.partnersyskey = p.syskey %s WHERE r.recordstatus <> 4 AND r.partnersyskey = ? %s %s %s %s and (%s)",
+                    dto.isAlldose() || (dto.getOperator() == 0 && dto.getDosecount() == 0) ? ""
+                            : "left join DoseRecords as d on r.cid = d.cid",
                     !dto.getCenterid().isEmpty() ? "and cid like " + "'" + dto.getCenterid() + "%'" : "",
                     getDoseCondition(dto),
-                    !dto.getVoidstatus().isEmpty() ? "and voidstatus = " + dto.getVoidstatus() : "", searchQuery);
+                    !dto.getVoidstatus().isEmpty() ? "and voidstatus = " + dto.getVoidstatus() : "",
+                    dto.isAlldose() || (dto.getOperator() == 0 && dto.getDosecount() == 0)
+                            || dto.getDoseupdatedate().isEmpty() ? ""
+                                    : String.format("and DATEDIFF(day, doseupdatetime, '%s') = 0",
+                                            dto.getDoseupdatedate()),
+                    searchQuery);
             datalist = new EasySql(DbFactory.getConnection()).getMany(keys, query, "cid", true, dto.getCurrentpage(),
                     dto.getPagesize(), Arrays.asList(dto.getPartnersyskey()));
         }
@@ -381,7 +402,43 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
                     .format("Recipients as r left join DoseRecords as d on r.cid = d.cid where dose %s ?", condition),
                     Arrays.asList(dto.getDosecount()));
         }
-        return datalist.stream().map(m -> {
+        List<LinkedHashMap<String, Object>> list = new ArrayList<>();
+        for (Map<String, Object> m : datalist) {
+            LinkedHashMap<String, Object> data = new LinkedHashMap<>();
+            data.put("CID", m.get("cid"));
+            data.put("Name", m.get("recipientsname"));
+            data.put("Sex", m.get("gender"));
+            data.put("Father's Name", m.get("fathername"));
+            data.put("DOB", m.get("dob"));
+            data.put("NRC", m.get("nric"));
+            data.put("Passport", m.get("passport"));
+            data.put("Organization", m.get("organization"));
+            data.put("Mobile", m.get("mobilephone"));
+            data.put("State/Region", m.get("division"));
+            data.put("Address", m.get("address1"));
+            data.put("Dose", m.get("dose"));
+            data.put("Lot No.", m.get("lot"));
+            data.put("Doctor/Nurse", m.get("doctor"));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            // Asia/Rangoon
+            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Rangoon"));
+            try {
+                SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+                parser.setTimeZone(TimeZone.getTimeZone("UTC"));
+                Date parsed = parser.parse((String) m.get("doseupdatetime"));
+
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
+
+                data.put("1st Dose Date", formatter.format(parsed));
+                data.put("2nd Dose Date", "");
+            } catch (ParseException e) {
+
+                e.printStackTrace();
+            }
+            data.put("Township", m.get("township"));
+            data.put("Remark", m.get("remark"));
+        }
+        datalist.stream().map(m -> {
             LinkedHashMap<String, Object> data = new LinkedHashMap<>();
             data.put("CID", m.get("cid"));
             data.put("Name", m.get("recipientsname"));
@@ -417,6 +474,8 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
             data.put("Remark", m.get("remark"));
             return data;
         }).collect(Collectors.toList());
+
+        return list;
 
     }
 }
