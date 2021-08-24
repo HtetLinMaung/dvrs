@@ -18,9 +18,18 @@ public class FilterDto extends BaseDto {
     private String voidstatus = "";
     private String recordstatus = "";
     private String doseupdatedate = "";
+    private boolean reverse = true;
 
     public int getDosecount() {
         return dosecount;
+    }
+
+    public boolean isReverse() {
+        return reverse;
+    }
+
+    public void setReverse(boolean reverse) {
+        this.reverse = reverse;
     }
 
     public String getDoseupdatedate() {

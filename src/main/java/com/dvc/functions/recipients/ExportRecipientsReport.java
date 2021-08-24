@@ -61,6 +61,7 @@ public class ExportRecipientsReport {
             String partnersyskey = auth.getTokenData().getPartnersyskey();
             dto.setPartnersyskey(
                     !auth.getTokenData().getRole().equals("Partner") ? dto.getPartnersyskey() : partnersyskey);
+            dto.setReverse(false);
             PaginationResponse<Map<String, Object>> resData = new RecipientsDao().getRecipients(dto);
 
             ByteArrayOutputStream out = ExcelUtil.writeExcel(resData.getDatalist().stream().map(m -> {
@@ -99,7 +100,8 @@ public class ExportRecipientsReport {
                 data.put("Remark", m.get("remark"));
                 return data;
             }).collect(Collectors.toList()), "Sheet1");
-            String url = AzureBlobUtils.createBlob(out, UUID.randomUUID().toString() + "-" + "dose_report.xls");
+            String url = AzureBlobUtils.createBlob(out,
+                    "Vaccinated_List" + "-" + UUID.randomUUID().toString() + ".xls");
             url += "?" + AzureBlobUtils.getSasToken();
             Map<String, Object> res = new EasyData<BaseResponse>(new BaseResponse()).toMap();
             res.put("url", url);

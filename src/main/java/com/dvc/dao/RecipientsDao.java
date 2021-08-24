@@ -58,7 +58,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
 
     @Override
     public PaginationResponse<Map<String, Object>> getRecipients(FilterDto dto) throws SQLException {
-        String searchQuery = EasySql.generateSearchQuery(Arrays.asList("cid", "recipientsname", "nric", "township"),
+        String searchQuery = EasySql.generateSearchQuery(Arrays.asList("cid", "recipientsname", "nric"),
                 dto.getSearch());
         if (dto.getSearch().isEmpty()) {
             searchQuery = "1 = 1";
@@ -66,12 +66,13 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         List<String> keys = Arrays.asList("r.syskey", "rid", "r.cid", "recipientsname", "fathername", "dob", "age",
                 "nric", "passport", "nationality", "organization", "township", "division", "mobilephone",
                 "registerationstatus", "vaccinationstatus", "batchrefcode", "partnername", "partnerid",
-                "r.partnersyskey", "voidstatus", "dose");
+                "r.partnersyskey", "voidstatus", "dose", "gender", "address1");
         if (!(dto.isAlldose() || (dto.getOperator() == 0 && dto.getDosecount() == 0))) {
             keys = Arrays.asList("r.syskey", "rid", "r.cid", "recipientsname", "fathername", "dob", "age", "nric",
                     "passport", "nationality", "organization", "township", "division", "mobilephone",
                     "registerationstatus", "vaccinationstatus", "batchrefcode", "partnername", "partnerid",
-                    "r.partnersyskey", "voidstatus", "dose", "doseupdatetime", "lot", "doctor", "d.remark", "d.userid");
+                    "r.partnersyskey", "voidstatus", "dose", "gender", "address1", "doseupdatetime", "lot", "doctor",
+                    "d.remark", "d.userid");
         }
 
         String query = "";
@@ -89,8 +90,8 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
                                     : String.format("and DATEDIFF(day, doseupdatetime, '%s') = 0",
                                             dto.getDoseupdatedate()),
                     searchQuery);
-            datalist = new EasySql(DbFactory.getConnection()).getMany(keys, query, "cid", true, dto.getCurrentpage(),
-                    dto.getPagesize(),
+            datalist = new EasySql(DbFactory.getConnection()).getMany(keys, query, "cid", dto.isReverse(),
+                    dto.getCurrentpage(), dto.getPagesize(),
                     dto.getPartnersyskey().isEmpty() ? new ArrayList<>() : Arrays.asList(dto.getPartnersyskey()));
         } else {
             query = String.format(
@@ -105,8 +106,8 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
                                     : String.format("and DATEDIFF(day, doseupdatetime, '%s') = 0",
                                             dto.getDoseupdatedate()),
                     searchQuery);
-            datalist = new EasySql(DbFactory.getConnection()).getMany(keys, query, "cid", true, dto.getCurrentpage(),
-                    dto.getPagesize(), Arrays.asList(dto.getPartnersyskey()));
+            datalist = new EasySql(DbFactory.getConnection()).getMany(keys, query, "cid", dto.isReverse(),
+                    dto.getCurrentpage(), dto.getPagesize(), Arrays.asList(dto.getPartnersyskey()));
         }
 
         PaginationResponse<Map<String, Object>> res = new PaginationResponse<>();
