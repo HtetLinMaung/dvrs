@@ -367,10 +367,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         } else if (dto.getOperator() == -1) {
             condition += "<";
         }
-        // "recipientsname", "fathername", "gender",
-        // "dob", "age", "nric", "passport", "nationality", "organization", "address1",
-        // "township", "division",
-        // "mobilephone"
+
         List<String> keys = Arrays.asList("r.cid", "doseupdatetime", "lot", "doctor", "d.remark", "r.dose",
                 "recipientsname", "gender", "fathername", "dob", "nric", "age", "passport", "organization",
                 "nationality", "division", "township", "mobilephone", "address1");
