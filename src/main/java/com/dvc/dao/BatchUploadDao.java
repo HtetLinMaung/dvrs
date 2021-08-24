@@ -332,8 +332,8 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                             recipient.put("firstdosedate", date);
                             recipient.put("firstdosetime", firstdosetime);
                             recipient.put("seconddosetime", firstdosetime);
-                        } else if (srno > 6300 && srno <= 10500) {
-                            int slot = (int) Math.ceil((double) (srno - 6300) / 700);
+                        } else if (srno > 6300) {
+                            int slot = (int) Math.ceil((double) (srno - 6300) / 850);
                             int day = (int) Math.ceil((double) slot / 6);
                             int timeslot = slot - ((day - 1) * 6);
                             String firstdosetime = "";
@@ -371,46 +371,47 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                             recipient.put("firstdosedate", date);
                             recipient.put("firstdosetime", firstdosetime);
                             recipient.put("seconddosetime", firstdosetime);
-                        } else if (srno > 10500) {
-                            int slot = (int) Math.ceil((double) (srno - 10500) / 1000);
-                            int day = (int) Math.ceil((double) slot / 6);
-                            int timeslot = slot - ((day - 1) * 6);
-                            String firstdosetime = "";
-                            switch (timeslot) {
-                                case 1:
-                                    // 8:30
-                                    firstdosetime = "8:30 AM";
-                                    break;
-                                case 2:
-                                    // 9:30
-                                    firstdosetime = "9:30 AM";
-                                    break;
-                                case 3:
-                                    // 10:30
-                                    firstdosetime = "10:30 AM";
-                                    break;
-                                case 4:
-                                    // 1:00
-                                    firstdosetime = "1:00 PM";
-                                    break;
-                                case 5:
-                                    // 2:00
-                                    firstdosetime = "2:00 PM";
-                                    break;
-                                case 6:
-                                    // 3:00
-                                    firstdosetime = "3:00 PM";
-                                    break;
-                            }
-                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                            String date = formatter.format(LocalDate.of(2021, 8, 26).plusDays(day));
-                            // if (formatter.format(LocalDate.now()).equals("23/08/2021")) {
-                            // date = formatter.format(LocalDate.now().plusDays(day));
-                            // }
-                            recipient.put("firstdosedate", date);
-                            recipient.put("firstdosetime", firstdosetime);
-                            recipient.put("seconddosetime", firstdosetime);
                         }
+                        // else if (srno > 10500) {
+                        // int slot = (int) Math.ceil((double) (srno - 10500) / 1000);
+                        // int day = (int) Math.ceil((double) slot / 6);
+                        // int timeslot = slot - ((day - 1) * 6);
+                        // String firstdosetime = "";
+                        // switch (timeslot) {
+                        // case 1:
+                        // // 8:30
+                        // firstdosetime = "8:30 AM";
+                        // break;
+                        // case 2:
+                        // // 9:30
+                        // firstdosetime = "9:30 AM";
+                        // break;
+                        // case 3:
+                        // // 10:30
+                        // firstdosetime = "10:30 AM";
+                        // break;
+                        // case 4:
+                        // // 1:00
+                        // firstdosetime = "1:00 PM";
+                        // break;
+                        // case 5:
+                        // // 2:00
+                        // firstdosetime = "2:00 PM";
+                        // break;
+                        // case 6:
+                        // // 3:00
+                        // firstdosetime = "3:00 PM";
+                        // break;
+                        // }
+                        // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                        // String date = formatter.format(LocalDate.of(2021, 8, 26).plusDays(day));
+                        // // if (formatter.format(LocalDate.now()).equals("23/08/2021")) {
+                        // // date = formatter.format(LocalDate.now().plusDays(day));
+                        // // }
+                        // recipient.put("firstdosedate", date);
+                        // recipient.put("firstdosetime", firstdosetime);
+                        // recipient.put("seconddosetime", firstdosetime);
+                        // }
 
                     } else if (pi.get("centerid").equals("YGN")) {
                         recipient.put("firstdosedate", "");
