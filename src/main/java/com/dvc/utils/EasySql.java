@@ -26,16 +26,27 @@ public class EasySql {
         // return String.format("FORMAT(CreatedDate,'dd/MM/yyyy') LIKE %s", "'%" +
         // search + "%'");
         // }
+        // if (search.startsWith("\"") && search.endsWith("\"")) {
+        // return String.join(" OR ",
+        // keys.stream().map(
+        // k -> String.format("CONVERT(varchar(255), %s) = N'%s'", k,
+        // search.replaceAll("\"", "")))
+        // .collect(Collectors.toList()));
+        // }
+
+        // return String.join(" OR ",
+        // keys.stream().map(k -> String.format("CONVERT(varchar(255), %s) LIKE %s", k,
+        // "N'%" + search + "%'"))
+        // .collect(Collectors.toList()));
+
         if (search.startsWith("\"") && search.endsWith("\"")) {
             return String.join(" OR ",
-                    keys.stream()
-                            .map(k -> String.format("CONVERT(varchar(255), %s) = '%s'", k, search.replaceAll("\"", "")))
+                    keys.stream().map(k -> String.format("%s = N'%s'", k, search.replaceAll("\"", "")))
                             .collect(Collectors.toList()));
         }
 
-        return String.join(" OR ",
-                keys.stream().map(k -> String.format("CONVERT(varchar(255), %s) LIKE %s", k, "'%" + search + "%'"))
-                        .collect(Collectors.toList()));
+        return String.join(" OR ", keys.stream().map(k -> String.format("%s LIKE %s", k, "N'%" + search + "%'"))
+                .collect(Collectors.toList()));
     }
 
     public static List<String> generateKeys(List<String> keys) {
