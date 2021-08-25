@@ -99,4 +99,5 @@ insert into Centers (syskey, centerid, centername, price, allowblank) values (41
 insert into Centers (syskey, centerid, centername, price, allowblank, recordstatus) values (42,'YGN', 'Reserved for adminstration', '50000', 0, 2);
 
 insert into Centers (syskey, centerid, centername, price, allowblank, recordstatus) values (43,'YGN10', 'Asia World', '40000', 0, 1);
+insert into Centers (syskey, centerid, centername, price, allowblank) values (44,'YGN11', N'မိုးကောင်းရတနာ', '40000', 0);
 
