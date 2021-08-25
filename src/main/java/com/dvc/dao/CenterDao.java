@@ -52,7 +52,8 @@ public class CenterDao extends BaseDao implements ICenterDao {
     private List<String> generateSerialRange(String lastcid, int count, String centerid) {
         List<String> datalist = new ArrayList<>();
         for (int i = 1; i <= count; i++) {
-            datalist.add(centerid + String.format("%07d", Cid.getNumberFromCid(lastcid) + i));
+            datalist.add(
+                    centerid + String.format("%07d", !lastcid.equals("0") ? Cid.getNumberFromCid(lastcid) + i : i));
         }
         return datalist;
     }
