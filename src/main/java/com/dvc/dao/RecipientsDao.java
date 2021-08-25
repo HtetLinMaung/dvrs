@@ -101,7 +101,8 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
                     "Recipients as r left join Partners as p on r.partnersyskey = p.syskey %s WHERE r.recordstatus <> 4 AND r.partnersyskey = ? %s %s %s %s and (%s)",
                     dto.isAlldose() || (dto.getOperator() == 0 && dto.getDosecount() == 0) ? ""
                             : "left join DoseRecords as d on r.cid = d.cid",
-                    !dto.getCenterid().isEmpty() ? "SUBSTRING(r.cid, 1, LEN(r.cid) - 7) = '" + dto.getCenterid() + "'"
+                    !dto.getCenterid().isEmpty()
+                            ? "and SUBSTRING(r.cid, 1, LEN(r.cid) - 7) = '" + dto.getCenterid() + "'"
                             : "",
                     getDoseCondition(dto),
                     !dto.getVoidstatus().isEmpty() ? "and voidstatus = " + dto.getVoidstatus() : "",

@@ -42,7 +42,7 @@ public class AddCenter {
             }
 
             CenterDto dto = new ObjectMapper().readValue(request.getBody().get(), CenterDto.class);
-            if (!dto.getCenterid().matches("^([a-zA-Z]{1,3}[0-9])$")) {
+            if (!dto.getCenterid().matches("^([a-zA-Z]{1,3}[0-9]{1,2})$")) {
                 BaseResponse res = new BaseResponse();
                 res.setRetcode(ServerStatus.INVALID_REQUEST);
                 res.setRetmessage("Invalid Center ID");
