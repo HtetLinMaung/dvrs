@@ -52,7 +52,7 @@ public class CenterDao extends BaseDao implements ICenterDao {
     private List<String> generateSerialRange(String lastcid, int count, String centerid) {
         List<String> datalist = new ArrayList<>();
         for (int i = 1; i <= count; i++) {
-            datalist.add(centerid + sum(Arrays.asList(lastcid, String.valueOf(i))));
+            datalist.add(centerid + String.format("%07d", Cid.getNumberFromCid(lastcid) + i));
         }
         return datalist;
     }
@@ -75,7 +75,7 @@ public class CenterDao extends BaseDao implements ICenterDao {
                 PreparedStatement insertstmt = connection.prepareStatement(sql);
                 int i = 1;
                 for (Object value : Arrays.asList(KeyGenerator.generateSyskey(), centerid,
-                        centerid + sum(Arrays.asList("0000000", String.valueOf(count))), now, now)) {
+                        centerid + String.format("%07d", count), now, now)) {
                     insertstmt.setObject(i++, value);
                 }
                 insertstmt.executeUpdate();
@@ -83,7 +83,7 @@ public class CenterDao extends BaseDao implements ICenterDao {
             } else {
                 sql = "update CenterLastSerials set cid = ? where centerid = ?";
                 PreparedStatement updatestmt = connection.prepareStatement(sql);
-                newlastcid = centerid + sum(Arrays.asList(lastcid, String.valueOf(count)));
+                newlastcid = centerid + String.format("%07d", Cid.getNumberFromCid(lastcid) + count);
                 updatestmt.setString(1, newlastcid);
                 updatestmt.setString(2, centerid);
                 updatestmt.executeUpdate();
