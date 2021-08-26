@@ -131,6 +131,7 @@ public class GenerateBlankCardRecipients {
                 map.put("mobilephone", "");
                 map.put("piref", pi.get("pirefnumber"));
                 map.put("voidstatus", 1);
+                map.put("centerid", pi.get("centerid"));
                 map.put("batchrefcode", batch.get("batchrefcode") + "-" + String.valueOf(i++));
                 QRYData data = new QRYData();
                 data.setCid(serial);

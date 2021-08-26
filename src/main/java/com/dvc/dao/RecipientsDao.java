@@ -36,13 +36,12 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         if (!dto.getPartnersyskey().isEmpty() && dto.getCenterid().isEmpty()) {
             return "and r.partnersyskey = ?";
         } else if (dto.getPartnersyskey().isEmpty() && !dto.getCenterid().isEmpty()) {
-            return "and r.cid like " + "'" + dto.getCenterid() + "%' and DATALENGTH(r.cid) = "
-                    + String.valueOf(dto.getCenterid().length() + 7);
+            return "and r.centerid = '" + dto.getCenterid() + "'";
+            // return "and r.cid like " + "'" + dto.getCenterid() + "%'";
             // return "and SUBSTRING(r.cid, 1, LEN(r.cid) - 7) = '" + dto.getCenterid() +
             // "'";
         } else if (!dto.getPartnersyskey().isEmpty() && !dto.getCenterid().isEmpty()) {
-            return "and r.cid like " + "'" + dto.getCenterid() + "%' and DATALENGTH(r.cid) = "
-                    + String.valueOf(dto.getCenterid().length() + 7) + " and partnersyskey = ?";
+            return "and r.centerid = " + "'" + dto.getCenterid() + "' and partnersyskey = ?";
             // return "and SUBSTRING(r.cid, 1, LEN(r.cid) - 7) = '" + dto.getCenterid() + "'
             // and partnersyskey = ?";
         }
@@ -107,8 +106,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
                     "Recipients as r left join Partners as p on r.partnersyskey = p.syskey left join ProformaInvoice as pi on r.pisyskey = pi.syskey %s WHERE r.recordstatus <> 4 AND r.partnersyskey = ? %s %s %s %s and (%s)",
                     dto.isAlldose() || (dto.getOperator() == 0 && dto.getDosecount() == 0) ? ""
                             : "left join DoseRecords as d on r.cid = d.cid",
-                    !dto.getCenterid().isEmpty() ? "and r.cid like " + "'" + dto.getCenterid()
-                            + "%' and DATALENGTH(r.cid) = " + String.valueOf(dto.getCenterid().length() + 7) : "",
+                    !dto.getCenterid().isEmpty() ? "and r.centerid = '" + dto.getCenterid() + "'" : "",
                     getDoseCondition(dto),
                     !dto.getVoidstatus().isEmpty() ? "and voidstatus = " + dto.getVoidstatus() : "",
                     dto.isAlldose() || (dto.getOperator() == 0 && dto.getDosecount() == 0)
@@ -363,7 +361,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
     }
 
     public List<Map<String, Object>> getSummary(String role, String partnersyskey) throws SQLException {
-        final String sql = "select s1.centerid, s1.centername, s1.cards, s1.doses, s1.cid, s2.voidcount from (select pi.centerid, c.centername, count(r.cid) as cards, sum(dose) as doses, max(cid) as cid from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi on r.pisyskey = pi.syskey left join [dbo].[Centers] as c on c.centerid = pi.centerid group by pi.centerid, c.centername) as s1 left join (select centerid,count(r.cid) as voidcount from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi on pi.syskey = r.pisyskey where voidstatus = 0 group by centerid) as s2 on s1.centerid = s2.centerid";
+        final String sql = "select s1.centerid, s1.centername, s1.cards, s1.doses, s1.cid, s2.voidcount from (select pi.centerid, c.centername, count(r.cid) as cards, sum(dose) as doses, max(cid) as cid from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi on r.pisyskey = pi.syskey left join [dbo].[Centers] as c on c.centerid = pi.centerid group by pi.centerid, c.centername) as s1 left join (select pi.centerid,count(r.cid) as voidcount from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi on pi.syskey = r.pisyskey where voidstatus = 0 group by pi.centerid) as s2 on s1.centerid = s2.centerid";
         try (Connection connection = DbFactory.getConnection();
                 PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
