@@ -361,7 +361,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
     }
 
     public List<Map<String, Object>> getSummary(String role, String partnersyskey) throws SQLException {
-        final String sql = "select s1.centerid, s1.centername, s1.cards, s1.doses, s1.cid, s2.voidcount from (select pi.centerid, c.centername, count(r.cid) as cards, sum(dose) as doses, max(cid) as cid from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi on r.pisyskey = pi.syskey left join [dbo].[Centers] as c on c.centerid = pi.centerid group by pi.centerid, c.centername) as s1 left join (select centerid,count(r.cid) as voidcount from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi on pi.syskey = r.pisyskey where voidstatus = 0 group by centerid) as s2 on s1.centerid = s2.centerid";
+        final String sql = "select s1.centerid, s1.centername, s1.cards, s1.doses, s1.cid, s2.voidcount from (select pi.centerid, c.centername, count(r.cid) as cards, sum(dose) as doses, max(cid) as cid from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi on r.pisyskey = pi.syskey left join [dbo].[Centers] as c on c.centerid = pi.centerid group by pi.centerid, c.centername) as s1 left join (select pi.centerid,count(r.cid) as voidcount from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi on pi.syskey = r.pisyskey where voidstatus = 0 group by pi.centerid) as s2 on s1.centerid = s2.centerid";
         try (Connection connection = DbFactory.getConnection();
                 PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
