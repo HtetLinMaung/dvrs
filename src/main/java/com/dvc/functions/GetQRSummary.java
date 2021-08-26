@@ -43,7 +43,7 @@ public class GetQRSummary {
                 return request.createResponseBuilder(HttpStatus.UNAUTHORIZED).body(res).build();
             }
             Map<String, Object> res = new EasyData<BaseResponse>(new BaseResponse()).toMap();
-            res.put("url", "www.google.com");
+            res.put("url", "https://www.kunyek.com/");
             return request.createResponseBuilder(HttpStatus.OK).body(res).build();
         } catch (Exception e) {
             BaseResponse res = new BaseResponse();
