@@ -7,6 +7,7 @@ import com.dvc.constants.ServerMessage;
 import com.dvc.constants.ServerStatus;
 import com.dvc.models.BaseResponse;
 import com.dvc.utils.EasyData;
+import com.dvc.utils.QRNewUtils;
 import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.HttpMethod;
 import com.microsoft.azure.functions.HttpRequestMessage;
@@ -32,8 +33,15 @@ public class GetQRSummary {
         context.getLogger().info("Java HTTP trigger processed a request.");
 
         try {
-            String encrypteduserid = request.getQueryParameters().get("userid");
+            String encrypteduserid = request.getQueryParameters().get("userid").replace(" ", "+");
+            String userid = QRNewUtils.decryptQRToken(encrypteduserid);
 
+            if (!userid.toLowerCase().contains("@vrs")) {
+                BaseResponse res = new BaseResponse();
+                res.setRetcode(ServerStatus.UNAUTHORIZED);
+                res.setRetmessage(ServerMessage.UNAUTHORIZED);
+                return request.createResponseBuilder(HttpStatus.UNAUTHORIZED).body(res).build();
+            }
             Map<String, Object> res = new EasyData<BaseResponse>(new BaseResponse()).toMap();
             res.put("url", "www.google.com");
             return request.createResponseBuilder(HttpStatus.OK).body(res).build();
