@@ -36,12 +36,16 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         if (!dto.getPartnersyskey().isEmpty() && dto.getCenterid().isEmpty()) {
             return "and partnersyskey = ?";
         } else if (dto.getPartnersyskey().isEmpty() && !dto.getCenterid().isEmpty()) {
+            return "and pi.centerid = '" + dto.getCenterid() + "'";
             // return "and r.cid like " + "'" + dto.getCenterid() + "%'";
-            return "and SUBSTRING(r.cid, 1, LEN(r.cid) - 7) = '" + dto.getCenterid() + "'";
+            // return "and SUBSTRING(r.cid, 1, LEN(r.cid) - 7) = '" + dto.getCenterid() +
+            // "'";
         } else if (!dto.getPartnersyskey().isEmpty() && !dto.getCenterid().isEmpty()) {
+            return "and pi.centerid = '" + dto.getCenterid() + "'";
             // return "and r.cid like " + "'" + dto.getCenterid() + "%' and partnersyskey =
             // ?";
-            return "and SUBSTRING(r.cid, 1, LEN(r.cid) - 7) = '" + dto.getCenterid() + "' and partnersyskey = ?";
+            // return "and SUBSTRING(r.cid, 1, LEN(r.cid) - 7) = '" + dto.getCenterid() + "'
+            // and partnersyskey = ?";
         }
         return "";
     }
@@ -66,6 +70,9 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         if (dto.getSearch().isEmpty()) {
             searchQuery = "1 = 1";
         }
+        // if (dto.getCenterid().equals("YGN")) {
+        // dto.setCenterid("YGN0");
+        // }
         List<String> keys = Arrays.asList("r.syskey", "rid", "r.cid", "recipientsname", "fathername", "dob", "age",
                 "nric", "passport", "nationality", "organization", "township", "division", "mobilephone",
                 "registerationstatus", "vaccinationstatus", "batchrefcode", "partnername", "partnerid",
@@ -83,7 +90,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         if (dto.getRole().equals("Admin") || dto.getRole().equals("Finance")) {
 
             query = String.format(
-                    "Recipients as r left join Partners as p on r.partnersyskey = p.syskey %s WHERE r.recordstatus <> 4 %s %s %s %s and (%s)",
+                    "Recipients as r left join Partners as p on r.partnersyskey = p.syskey left join ProformaInvoice as pi on r.pisyskey = pi.syskey %s WHERE r.recordstatus <> 4 %s %s %s %s and (%s)",
                     dto.isAlldose() || (dto.getOperator() == 0 && dto.getDosecount() == 0) ? ""
                             : "left join DoseRecords as d on r.cid = d.cid",
                     getFilterQuery(dto), getDoseCondition(dto),
@@ -98,12 +105,10 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
                     dto.getPartnersyskey().isEmpty() ? new ArrayList<>() : Arrays.asList(dto.getPartnersyskey()));
         } else {
             query = String.format(
-                    "Recipients as r left join Partners as p on r.partnersyskey = p.syskey %s WHERE r.recordstatus <> 4 AND r.partnersyskey = ? %s %s %s %s and (%s)",
+                    "Recipients as r left join Partners as p on r.partnersyskey = p.syskey left join ProformaInvoice as pi on r.pisyskey = pi.syskey %s WHERE r.recordstatus <> 4 AND r.partnersyskey = ? %s %s %s %s and (%s)",
                     dto.isAlldose() || (dto.getOperator() == 0 && dto.getDosecount() == 0) ? ""
                             : "left join DoseRecords as d on r.cid = d.cid",
-                    !dto.getCenterid().isEmpty()
-                            ? "and SUBSTRING(r.cid, 1, LEN(r.cid) - 7) = '" + dto.getCenterid() + "'"
-                            : "",
+                    !dto.getCenterid().isEmpty() ? "and pi.centerid = '" + dto.getCenterid() + "'" : "",
                     getDoseCondition(dto),
                     !dto.getVoidstatus().isEmpty() ? "and voidstatus = " + dto.getVoidstatus() : "",
                     dto.isAlldose() || (dto.getOperator() == 0 && dto.getDosecount() == 0)
