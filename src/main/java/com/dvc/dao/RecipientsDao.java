@@ -67,9 +67,9 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         if (dto.getSearch().isEmpty()) {
             searchQuery = "1 = 1";
         }
-        // if (dto.getCenterid().equals("YGN")) {
-        // dto.setCenterid("YGN0");
-        // }
+        if (dto.getCenterid().equals("YGN")) {
+            dto.setCenterid("YGN0");
+        }
         List<String> keys = Arrays.asList("r.syskey", "rid", "r.cid", "recipientsname", "fathername", "dob", "age",
                 "nric", "passport", "nationality", "organization", "township", "division", "mobilephone",
                 "registerationstatus", "vaccinationstatus", "batchrefcode", "partnername", "partnerid",
