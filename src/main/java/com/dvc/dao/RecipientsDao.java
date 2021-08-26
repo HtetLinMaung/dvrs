@@ -358,39 +358,83 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
     }
 
     public List<Map<String, Object>> getSummary(String role, String partnersyskey) throws SQLException {
-        List<String> keys = Arrays.asList("cl.cid", "c.centerid", "firstdosedate", "firstdosetime", "seconddosetime",
-                "centername");
-        List<Map<String, Object>> datalist = new ArrayList<>();
-        if (role.equals("Partner")) {
-            datalist = getDBClient().getMany(keys,
-                    "CenterLastSerials as cl left join Recipients as r on r.cid = cl.cid left join Centers as c on c.centerid = cl.centerid where cl.centerid in (select centerid from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi on r.pisyskey = pi.syskey where r.partnersyskey = ? group by pi.centerid)",
-                    Arrays.asList(partnersyskey));
-        } else {
-            datalist = getDBClient().getMany(keys,
-                    "CenterLastSerials as cl left join Recipients as r on r.cid = cl.cid left join Centers as c on c.centerid = cl.centerid");
+        final String sql = "select s1.centerid, s1.centername, s1.cards, s1.doses, s1.cid, s2.voidcount from (select pi.centerid, c.centername, count(r.cid) as cards, sum(dose) as doses, max(cid) as cid from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi on r.pisyskey = pi.syskey left join [dbo].[Centers] as c on c.centerid = pi.centerid group by pi.centerid, c.centername) as s1 left join (select centerid,count(r.cid) as voidcount from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi on pi.syskey = r.pisyskey where voidstatus = 0 group by centerid) as s2 on s1.centerid = s2.centerid";
+        try (Connection connection = DbFactory.getConnection();
+                PreparedStatement stmt = connection.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            List<Map<String, Object>> datalist = new ArrayList<>();
+            while (rs.next()) {
+                Map<String, Object> data = new HashMap<>();
+                data.put("centerid", rs.getString("centerid"));
+                data.put("centername", rs.getString("centername"));
+                data.put("cards", rs.getString("cards"));
+                data.put("doses", rs.getString("doses"));
+                data.put("cid", rs.getString("cid"));
+                data.put("voidcount", rs.getString("voidcount") == null ? "0" : rs.getString("voidcount"));
+                data.put("firstdosedate", "");
+                data.put("firstdosetime", "");
+                data.put("seconddosetime", "");
+                if (rs.getString("centerid").equals("YGN1") || rs.getString("centerid").equals("YGN")) {
+                    List<Map<String, Object>> list = getDBClient().getMany(
+                            Arrays.asList("firstdosedate", "firstdosetime", "seconddosetime"),
+                            "Recipients where cid = ?", Arrays.asList(data.get("cid")));
+                    if (list.size() > 0) {
+                        data.putAll(list.get(0));
+                    }
+                }
+                datalist.add(data);
+            }
+            return datalist;
         }
-
-        for (Map<String, Object> data : datalist) {
-            // data.put("cards", getTotalCount("Recipients where cid like '" +
-            // data.get("centerid") + "%'"));
-            // data.put("cards", Integer.parseInt(((String)
-            // data.get("cid")).replaceAll("^([a-zA-Z]{1,3}[0-9])", "")));
-            data.put("cards", Cid.getNumberFromCid((String) data.get("cid")));
-            // data.put("picount",
-            // getTotalCount("ProformaInvoice where centerid = ?",
-            // Arrays.asList(data.get("centerid"))));
-            // data.put("batchcount", getTotalCount(
-            // "BatchUpload as b left join ProformaInvoice as pi on b.pisyskey = pi.syskey
-            // where pi.centerid = ?",
-            // Arrays.asList(data.get("centerid"))));
-            // data.put("partnercount", getTotalCount(
-            // "Partners as p left join ProformaInvoice as pi on p.syskey = pi.partnersyskey
-            // where pi.centerid = ?",
-            // Arrays.asList(data.get("centerid"))));
-
-        }
-        return datalist;
     }
+
+    // public List<Map<String, Object>> getSummary(String role, String
+    // partnersyskey) throws SQLException {
+    // List<String> keys = Arrays.asList("cl.cid", "c.centerid", "firstdosedate",
+    // "firstdosetime", "seconddosetime",
+    // "centername");
+    // List<Map<String, Object>> datalist = new ArrayList<>();
+    // if (role.equals("Partner")) {
+    // datalist = getDBClient().getMany(keys,
+    // "CenterLastSerials as cl left join Recipients as r on r.cid = cl.cid left
+    // join Centers as c on c.centerid = cl.centerid where cl.centerid in (select
+    // centerid from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi
+    // on r.pisyskey = pi.syskey where r.partnersyskey = ? group by pi.centerid)",
+    // Arrays.asList(partnersyskey));
+    // } else {
+    // datalist = getDBClient().getMany(keys,
+    // "CenterLastSerials as cl left join Recipients as r on r.cid = cl.cid left
+    // join Centers as c on c.centerid = cl.centerid");
+    // }
+
+    // for (Map<String, Object> data : datalist) {
+    // // data.put("cards", getTotalCount("Recipients where cid like '" +
+    // // data.get("centerid") + "%'"));
+    // // data.put("cards", Integer.parseInt(((String)
+    // // data.get("cid")).replaceAll("^([a-zA-Z]{1,3}[0-9])", "")));
+    // data.put("cards", Cid.getNumberFromCid((String) data.get("cid")));
+    // // data.put("voidcount",
+    // // getTotalCount("Recipients where voidstatus = 0 and SUBSTRING(cid, 1,
+    // LEN(cid)
+    // // - 7) = ?",
+    // // Arrays.asList(data.get("centerid"))));
+    // // data.put("picount",
+    // // getTotalCount("ProformaInvoice where centerid = ?",
+    // // Arrays.asList(data.get("centerid"))));
+    // // data.put("batchcount", getTotalCount(
+    // // "BatchUpload as b left join ProformaInvoice as pi on b.pisyskey =
+    // pi.syskey
+    // // where pi.centerid = ?",
+    // // Arrays.asList(data.get("centerid"))));
+    // // data.put("partnercount", getTotalCount(
+    // // "Partners as p left join ProformaInvoice as pi on p.syskey =
+    // pi.partnersyskey
+    // // where pi.centerid = ?",
+    // // Arrays.asList(data.get("centerid"))));
+
+    // }
+    // return datalist;
+    // }
 
     public List<LinkedHashMap<String, Object>> getRecipients(ReportDto dto) throws SQLException {
         String condition = "";

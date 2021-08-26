@@ -3,8 +3,13 @@ select qrtoken from [dbo].[Recipients] where cid = 'YGN60000101'
 -- select centerid, count(r.cid), sum(dose) from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi 
 -- on r.pisyskey = pi.syskey where r.partnersyskey = 6389850392744707047 group by pi.centerid
 
-select pi.centerid, c.centername, count(r.cid), sum(dose), max(cid), r.firstdosedate from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi 
-on r.pisyskey = pi.syskey left join [dbo].[Centers] as c on c.centerid = pi.centerid group by pi.centerid, c.centername, r.firstdosedate
+select pi.centerid, c.centername, count(r.cid), sum(dose), max(cid) from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi 
+on r.pisyskey = pi.syskey left join [dbo].[Centers] as c on c.centerid = pi.centerid group by pi.centerid, c.centername
+
+select centerid,count(r.cid) as voidcount from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi on pi.syskey = r.pisyskey where voidstatus = 0 group by centerid
+
+select s1.centerid from (select pi.centerid, c.centername, count(r.cid) as cards, sum(dose) as doses, max(cid) as cid from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi 
+on r.pisyskey = pi.syskey left join [dbo].[Centers] as c on c.centerid = pi.centerid group by pi.centerid, c.centername) as s1 left join (select centerid,count(r.cid) as voidcount from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi on pi.syskey = r.pisyskey where voidstatus = 0 group by centerid) as s2 on s1.centerid = s2.centerid
 
 -- scan not update
 select r.cid, q.userid, q.verifyat, dose, recipientsname, fathername, nric, passport, dob, 
