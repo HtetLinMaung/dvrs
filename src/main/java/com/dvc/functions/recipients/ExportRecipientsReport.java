@@ -72,6 +72,7 @@ public class ExportRecipientsReport {
                 data.put("DOB", m.get("dob"));
                 data.put("NRC", m.get("nric"));
                 data.put("Passport", m.get("passport"));
+                data.put("Nationality", m.get("nationality"));
                 data.put("Organization", m.get("organization"));
                 data.put("Mobile", m.get("mobilephone"));
                 data.put("State/Region", m.get("division"));
