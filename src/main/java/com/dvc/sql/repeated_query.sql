@@ -19,3 +19,21 @@ select qty, balance, voidcount from [dbo].[ProformaInvoice] where pirefnumber = 
 
 
 select distinct q.cid from [dbo].[QRLog] as q left join [dbo].[Recipients] as r on r.cid = q.cid where q.cid not in (select cid from [dbo].[DoseRecords] where DATEDIFF(day, doseupdatetime, '2021/08/25') = 0)
+
+
+
+
+
+
+
+
+
+
+update [dbo].[Recipients] set t10 = '1) 26/08/2021, NA Khin Myat Thu, lot 202107B1936, 2, 1; ',
+ dose = 1 where cid = 'YGN10007485'
+delete from [dbo].[DoseRecords] where syskey = 5952001945114819371
+select * from [dbo].[DoseRecords] where cid = 'YGN10007485'
+select t10 from [dbo].[Recipients] where cid = 'YGN10007485'
+
+
+
