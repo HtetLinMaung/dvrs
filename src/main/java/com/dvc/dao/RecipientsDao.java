@@ -34,7 +34,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
 
     private String getFilterQuery(FilterDto dto) {
         if (!dto.getPartnersyskey().isEmpty() && dto.getCenterid().isEmpty()) {
-            return "and partnersyskey = ?";
+            return "and r.partnersyskey = ?";
         } else if (dto.getPartnersyskey().isEmpty() && !dto.getCenterid().isEmpty()) {
             return "and r.cid like " + "'" + dto.getCenterid() + "%'";
             // return "and SUBSTRING(r.cid, 1, LEN(r.cid) - 7) = '" + dto.getCenterid() +

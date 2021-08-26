@@ -12,7 +12,7 @@ select s1.centerid from (select pi.centerid, c.centername, count(r.cid) as cards
 on r.pisyskey = pi.syskey left join [dbo].[Centers] as c on c.centerid = pi.centerid group by pi.centerid, c.centername) as s1 left join (select centerid,count(r.cid) as voidcount from [dbo].[Recipients] as r left join [dbo].[ProformaInvoice] as pi on pi.syskey = r.pisyskey where voidstatus = 0 group by centerid) as s2 on s1.centerid = s2.centerid
 
 -- scan not update
-select r.cid, q.userid, q.verifyat, dose, recipientsname, fathername, nric, passport, dob, 
+select r.cid, q.userid, q.verifyat, dose, recipientsname, fathername, nric, passport, nationality, dob, 
 township, address1, mobilephone from [dbo].[Recipients] as r left join [dbo].[QRLog] as q on 
 q.cid = r.cid where dose = 0 and DATEDIFF(day, verifyat, '2021/08/25') = 0 and (r.cid like 'YGN1%' or r.cid like 'YGN0%')
 
