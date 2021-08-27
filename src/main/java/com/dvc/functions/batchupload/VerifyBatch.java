@@ -388,6 +388,15 @@ public class VerifyBatch {
             return request.createResponseBuilder(HttpStatus.OK).body(new BaseResponse()).build();
 
         } catch (Exception e) {
+            try {
+                Map<String, Object> args = new HashMap<>();
+                args.put("syskey", request.getQueryParameters().get("id"));
+                args.put("recordstatus", 500);
+                new BatchUploadDao().updateBatch(args);
+            } catch (Exception e3) {
+                context.getLogger().severe(e3.getMessage());
+            }
+
             context.getLogger().severe(e.getMessage());
             BaseResponse res = new BaseResponse();
             res.setRetcode(ServerStatus.SERVER_ERROR);

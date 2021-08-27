@@ -47,3 +47,13 @@ select t10 from [dbo].[Recipients] where cid = 'YGN10007485'
 
 select cid, centerid from [dbo].[Recipients] 
 where centerid = 'YGN1' and (cid between 'YGN10000001' and 'YGN10000003' or cid between 'YGN10000006' and 'YGN10000009') order by cid
+
+
+
+select count(r.cid), partnersyskey from Recipients group by partnersyskey
+
+select p.partnername,sum(validcount), p.partnersyskey from [dbo].[BatchUpload] as b left join [dbo].[Partners] as p on p.syskey = b.partnersyskey group by b.partnersyskey, p.partnername
+
+select s1.partnername, s1.totalvalid, s2.totalrecipients from (select p.partnername, sum(validcount) as totalvalid, b.partnersyskey 
+from [dbo].[BatchUpload] as b left join [dbo].[Partners] as p on 
+p.syskey = b.partnersyskey where b.recordstatus >= 30 group by b.partnersyskey, p.partnername) as s1 left join (select count(cid) as totalrecipients, partnersyskey from Recipients group by partnersyskey) as s2 on s1.partnersyskey = s2.partnersyskey where s1.totalvalid <> s2.totalrecipients
