@@ -42,4 +42,8 @@ select t10 from [dbo].[Recipients] where cid = 'YGN10007485'
 
 
 
-select cid, firstdosedate, firstdosetime, recipientsname, fathername, nric, passport, nationality, mobilephone, division, address1, mobilephone, remark from [dbo].[Recipients] where cid like 'YGN1%' and dose = 1 and (cast(replace(cid, 'YGN1', '') as int) > 11400 and cast(replace(cid, 'YGN1', '') as int) <= 12250 or cast(replace(cid, 'YGN1', '') as int) > 13950 and cast(replace(cid, 'YGN1', '') as int) <= 14800)
+-- select cid, firstdosedate, firstdosetime, recipientsname, fathername, nric, passport, nationality, mobilephone, division, address1, mobilephone, remark from [dbo].[Recipients] where cid like 'YGN1%' and dose = 1 and (cast(replace(cid, 'YGN1', '') as int) > 11400 and cast(replace(cid, 'YGN1', '') as int) <= 12250 or cast(replace(cid, 'YGN1', '') as int) > 13950 and cast(replace(cid, 'YGN1', '') as int) <= 14800)
+
+
+select cid, centerid from [dbo].[Recipients] 
+where centerid = 'YGN1' and (cid between 'YGN10000001' and 'YGN10000003' or cid between 'YGN10000006' and 'YGN10000009') order by cid
