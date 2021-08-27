@@ -68,7 +68,7 @@ public class UploadBatch {
             } catch (Exception e) {
                 BaseResponse res = new BaseResponse();
                 res.setRetcode(ServerStatus.INVALID_REQUEST);
-                res.setRetmessage("Excel 97 to 2003 format not supported");
+                res.setRetmessage("Can't read Excel file!");
                 return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(res).build();
             }
             // Map<String, Object> firstrow = ExcelUtil.getExcelFirstRow(dto.getFile(),

@@ -41,7 +41,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
             // return "and SUBSTRING(r.cid, 1, LEN(r.cid) - 7) = '" + dto.getCenterid() +
             // "'";
         } else if (!dto.getPartnersyskey().isEmpty() && !dto.getCenterid().isEmpty()) {
-            return "and r.centerid = " + "'" + dto.getCenterid() + "' and partnersyskey = ?";
+            return "and r.centerid = " + "'" + dto.getCenterid() + "' and r.partnersyskey = ?";
             // return "and SUBSTRING(r.cid, 1, LEN(r.cid) - 7) = '" + dto.getCenterid() + "'
             // and partnersyskey = ?";
         }
