@@ -3,6 +3,7 @@ package com.dvc.functions.recipients;
 import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -99,8 +100,17 @@ public class ExportRecipientsReport {
                 data.put("Remark", m.get("remark"));
                 return data;
             }).collect(Collectors.toList()), "Sheet1");
+            String[] updatedate = dto.getDoseupdatedate().split("/");
+            String selecteddate = "";
+            if (updatedate.length == 3) {
+                selecteddate = updatedate[2] + updatedate[1] + updatedate[0];
+            }
+            LocalDate lDate = LocalDate.now();
+            String exporteddate = String.valueOf(lDate.getDayOfMonth()) + String.valueOf(lDate.getMonthValue())
+                    + String.valueOf(lDate.getYear());
             String url = AzureBlobUtils.createBlob(out,
-                    "Vaccinated_List" + "-" + UUID.randomUUID().toString() + ".xls");
+                    "Vaccinated_List_" + selecteddate + "_" + (dto.getCenterid().isEmpty() ? "all" : dto.getCenterid())
+                            + "_" + exporteddate + "-" + UUID.randomUUID().toString() + ".xls");
             url += "?" + AzureBlobUtils.getSasToken();
             Map<String, Object> res = new EasyData<BaseResponse>(new BaseResponse()).toMap();
             res.put("url", url);
