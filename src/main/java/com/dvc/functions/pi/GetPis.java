@@ -1,18 +1,26 @@
 package com.dvc.functions.pi;
 
-import java.util.*;
-import com.microsoft.azure.functions.annotation.*;
+import java.util.Map;
+import java.util.Optional;
+
 import com.dvc.constants.ServerMessage;
 import com.dvc.constants.ServerStatus;
-import com.dvc.dao.BatchUploadDao;
 import com.dvc.dao.PIDao;
 import com.dvc.middlewares.SecurityMiddleware;
 import com.dvc.models.BaseResponse;
 import com.dvc.models.FilterDto;
 import com.dvc.models.MiddlewareData;
 import com.dvc.models.PaginationResponse;
+import com.dvc.utils.EasyData;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microsoft.azure.functions.*;
+import com.microsoft.azure.functions.ExecutionContext;
+import com.microsoft.azure.functions.HttpMethod;
+import com.microsoft.azure.functions.HttpRequestMessage;
+import com.microsoft.azure.functions.HttpResponseMessage;
+import com.microsoft.azure.functions.HttpStatus;
+import com.microsoft.azure.functions.annotation.AuthorizationLevel;
+import com.microsoft.azure.functions.annotation.FunctionName;
+import com.microsoft.azure.functions.annotation.HttpTrigger;
 
 /**
  * Azure Functions with HTTP Trigger.
@@ -42,8 +50,12 @@ public class GetPis {
             }
 
             PaginationResponse<Map<String, Object>> resData = new PIDao().getPis(dto);
-            return request.createResponseBuilder(HttpStatus.OK).body(resData).build();
-        } catch (Exception e) {context.getLogger().severe(e.getMessage());
+            Map<String, Object> totalData = new PIDao().getTotalQB(partnersyskey);
+            Map<String, Object> body = new EasyData<PaginationResponse<Map<String, Object>>>(resData).toMap();
+            body.putAll(totalData);
+            return request.createResponseBuilder(HttpStatus.OK).body(body).build();
+        } catch (Exception e) {
+            context.getLogger().severe(e.getMessage());
             BaseResponse res = new BaseResponse();
             res.setRetcode(ServerStatus.SERVER_ERROR);
             res.setRetmessage(ServerMessage.SERVER_ERROR);

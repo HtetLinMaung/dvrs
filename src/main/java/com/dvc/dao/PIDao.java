@@ -3,6 +3,9 @@ package com.dvc.dao;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -265,6 +268,28 @@ public class PIDao extends BaseDao implements IPIDao {
             return true;
         }
         return false;
+    }
+
+    public Map<String, Object> getTotalQB(String partnersyskey) throws SQLException {
+        String sql = "select sum(qty) as totalqty, sum(balance + voidcount) as totalbalance from [dbo].[ProformaInvoice]";
+        if (!partnersyskey.isEmpty()) {
+            sql += " where partnersyskey = ?";
+        }
+
+        try (Connection connection = DbFactory.getConnection();
+                PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (!partnersyskey.isEmpty()) {
+                stmt.setString(1, partnersyskey);
+            }
+            ResultSet rs = stmt.executeQuery();
+            Map<String, Object> data = new HashMap<>();
+            while (rs.next()) {
+                data.put("totalqty", rs.getString("totalqty"));
+                data.put("totalbalance", rs.getString("totalbalance"));
+            }
+            return data;
+
+        }
     }
 
 }
