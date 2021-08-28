@@ -67,7 +67,7 @@ public class RecipientsDownloadDao {
                 r.setRecipientsName(rs.getString("RecipientsName"));
                 r.setGender(rs.getString("Gender"));
                 if (r.getGender() != null && !r.getGender().isEmpty() && !r.getGender().equals("")) {
-                    if (r.getGender().equalsIgnoreCase("M")) {
+                    if (r.getGender().equalsIgnoreCase("M") || r.getGender().equalsIgnoreCase("ကျား")) {
                         r.setGender("Male");
                     } else {
                         r.setGender("Female");
@@ -162,7 +162,8 @@ public class RecipientsDownloadDao {
                 recipentsData.setGender(rs.getString("Gender"));
                 if (recipentsData.getGender() != null && !recipentsData.getGender().isEmpty()
                         && !recipentsData.getGender().equals("")) {
-                    if (recipentsData.getGender().equalsIgnoreCase("M")) {
+                    if (recipentsData.getGender().equalsIgnoreCase("M")
+                            || recipentsData.getGender().equalsIgnoreCase("ကျား")) {
                         recipentsData.setGender("Male");
                     } else {
                         recipentsData.setGender("Female");
