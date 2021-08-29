@@ -71,7 +71,7 @@ public class CheckQRToken {
                 String cardid = cid.replaceAll("\\u0000", "");
                 context.getLogger().info("cardid = " + cardid);
                 context.getLogger().info("userid = " + dto.getUserid());
-                if (!dto.getUserid().matches("^([A-Za-z0-9]{2,4})-([0-9]{2})@vrs$")
+                if (!dto.getUserid().matches("^([A-Za-z0-9]{2,5})-([0-9]{2})@vrs$")
                         && !dto.getUserid().matches("admin-(.*)@vrs") && dto.getUserid().contains("@vrs")) {
                     if (recipient.get("voidstatus").equals("1")) {
                         rData.put("Valid Record Card" + (dose > 0 ? " - " + recipient.get("dose") + " dose(s)" : ""),
@@ -90,7 +90,7 @@ public class CheckQRToken {
 
                     rData.put("Gender", recipient.get("gender"));
                     rData.put("Dose Details", recipient.get("t10"));
-                } else if (dto.getUserid().matches("^([A-Za-z0-9]{2,4})-([0-9]{2})@vrs$")) {
+                } else if (dto.getUserid().matches("^([A-Za-z0-9]{2,5})-([0-9]{2})@vrs$")) {
                     int num = Integer.parseInt(dto.getUserid().split("-")[1].replaceAll("@", "")
                             .replaceAll("[a-zA-Z]", "").replaceAll("\\.", ""));
 
