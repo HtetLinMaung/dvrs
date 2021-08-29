@@ -199,7 +199,10 @@ public class RecipientsDownloadDao {
                     String nrcNo = recipentsData.getNRIC();
                     if (nrcNo.contains(")")) {
                         String[] arr = nrcNo.split("\\)");
-                        recipentsData.setPdfName(name + "-" + arr[1]);
+                        if (arr.length > 1)
+                            recipentsData.setPdfName(name + "-" + arr[1]);
+                        else
+                            recipentsData.setPdfName(name);
                     } else {
                         recipentsData.setPdfName(name + "-" + nrcNo);
                     }
