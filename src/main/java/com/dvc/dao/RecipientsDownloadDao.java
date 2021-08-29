@@ -69,7 +69,7 @@ public class RecipientsDownloadDao {
                 if (r.getGender() != null && !r.getGender().isEmpty() && !r.getGender().equals("")) {
                     if (r.getGender().equalsIgnoreCase("M")) {
                         r.setGender("Male");
-                    } else {
+                    } else if (r.getGender().equalsIgnoreCase("F")) {
                         r.setGender("Female");
                     }
                 }
@@ -164,7 +164,7 @@ public class RecipientsDownloadDao {
                         && !recipentsData.getGender().equals("")) {
                     if (recipentsData.getGender().equalsIgnoreCase("M")) {
                         recipentsData.setGender("Male");
-                    } else {
+                    } else if (recipentsData.getGender().equalsIgnoreCase("F")) {
                         recipentsData.setGender("Female");
                     }
                 }
@@ -199,7 +199,10 @@ public class RecipientsDownloadDao {
                     String nrcNo = recipentsData.getNRIC();
                     if (nrcNo.contains(")")) {
                         String[] arr = nrcNo.split("\\)");
-                        recipentsData.setPdfName(name + "-" + arr[1]);
+                        if (arr.length > 1)
+                            recipentsData.setPdfName(name + "-" + arr[1]);
+                        else
+                            recipentsData.setPdfName(name);
                     } else {
                         recipentsData.setPdfName(name + "-" + nrcNo);
                     }
