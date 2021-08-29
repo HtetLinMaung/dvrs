@@ -170,7 +170,9 @@ public class ExcelUtil {
                 Map<String, Object> map = new HashMap<>();
                 boolean isempty = true;
                 for (int cn = 0; cn < row.getLastCellNum(); cn++) {
-
+                    if (j > headers.size()) {
+                        break;
+                    }
                     Cell cell = row.getCell(cn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
 
                     try {
