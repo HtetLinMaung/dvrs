@@ -44,7 +44,7 @@ public class ApproveRecipient {
             UpdateRecipientDto dto = new ObjectMapper().readValue(request.getBody().get(), UpdateRecipientDto.class);
 
             TokenData tokenData = auth.getTokenData();
-            dto.setUserid(tokenData.getDvrsuserid());
+            dto.setUserid(tokenData.getUserid());
             dto.setUsername(tokenData.getDvrsusername());
 
             RecipientsDao dao = new RecipientsDao();

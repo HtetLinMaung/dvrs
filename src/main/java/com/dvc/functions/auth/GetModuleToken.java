@@ -68,7 +68,7 @@ public class GetModuleToken {
 
             Map<String, Object> payload = new EasySql(DbFactory.getConnection()).getOne(
                     Arrays.asList("partnersyskey", "dvrsuserid", "role", "partnerid", "partnertype", "partnername",
-                            "contactperson", "dvrsusername", "pu.emailaddress"),
+                            "contactperson", "dvrsusername"),
                     "PartnerUser as pu left join Partners as p on p.syskey = pu.partnersyskey where pu.recordstatus <> 4 and pu.emailaddress = ?",
                     Arrays.asList(dto.getUserid()));
             payload.put("userid", dto.getUserid());

@@ -12,7 +12,6 @@ public class TokenData {
     private String contactperson;
     private String userlevel;
     private String dvrsusername;
-    private String emailaddress;
 
     public String getUserid() {
         return userid;
