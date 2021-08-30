@@ -49,7 +49,7 @@ create table RecipientsHistory (
     t7 nvarchar(255),
     t8 nvarchar(255),
     t9 nvarchar(255),
-    t10 nvarchar(255),
+    t10 ntext,
     n1 numeric(18, 2),
     n2 numeric(18, 2),
     n3 numeric(18, 2),

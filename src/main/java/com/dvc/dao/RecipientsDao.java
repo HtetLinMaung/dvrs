@@ -593,4 +593,45 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         getDBClient().insertMany("SubmittedRecipients", Arrays.asList(args));
         return 1;
     }
+
+    private Map<String, Object> getCard(String cid) throws SQLException {
+        return getDBClient().getOne(
+                Arrays.asList("cid", "recipientsname", "fathername", "gender", "nric", "passport", "nationality", "dob",
+                        "age", "organization", "occupation", "address1", "township", "division", "mobilephone", "piref",
+                        "batchuploadsyskey", "partnersyskey", "pisyskey", "voidstatus", "qrtoken", "batchrefcode",
+                        "dose", "firstdosedate", "firstdosetime", "seconddosetime", "centerid"),
+                "Recipients where cid = ?", Arrays.asList(cid));
+    }
+
+    public int approveRecipient(String cid, String userid, String username) throws SQLException, IOException {
+        List<Map<String, Object>> datalist = getSubmittedRecipient(cid);
+        if (datalist.size() == 0) {
+            return 0;
+        }
+        final String now = Instant.now().toString();
+        Map<String, Object> args = datalist.get(0);
+        Map<String, Object> oldRecipient = getCard(cid);
+        long refno = KeyGenerator.generateSyskey();
+        oldRecipient.put("syskey", KeyGenerator.generateSyskey());
+        oldRecipient.put("userid", userid);
+        oldRecipient.put("username", username);
+        oldRecipient.put("createddate", now);
+        oldRecipient.put("modifieddate", now);
+        oldRecipient.put("refno", refno);
+        oldRecipient.put("pairkey", 1);
+
+        getDBClient().updateOne("Recipients", "cid", args);
+        Map<String, Object> recipient = getCard(cid);
+        recipient.put("syskey", KeyGenerator.generateSyskey());
+        recipient.put("userid", userid);
+        recipient.put("username", username);
+        recipient.put("createddate", now);
+        recipient.put("modifieddate", now);
+        recipient.put("refno", refno);
+        recipient.put("pairkey", 2);
+
+        getDBClient().insertMany("RecipientsHistory", Arrays.asList(oldRecipient, recipient));
+        return 1;
+
+    }
 }
