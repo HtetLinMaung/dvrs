@@ -292,4 +292,80 @@ public class PIDao extends BaseDao implements IPIDao {
         }
     }
 
+    public List<Map<String, Object>> getPiUsagesOnCenter() throws SQLException {
+        String sql = "select centerid, sum(qty) as totalqty, sum(balance + voidcount) as totalbalance, sum(qty) - sum(balance + voidcount) as totalusedamount from [dbo].[ProformaInvoice] group by centerid";
+        try (Connection connection = DbFactory.getConnection();
+                PreparedStatement stmt = connection.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            List<Map<String, Object>> datalist = new ArrayList<>();
+            while (rs.next()) {
+                Map<String, Object> data = new HashMap<>();
+                data.put("centerid", rs.getString("centerid"));
+                data.put("totalqty", rs.getInt("totalqty"));
+                data.put("totalbalance", rs.getInt("totalbalance"));
+                data.put("totalusedamount", rs.getInt("totalusedamount"));
+                datalist.add(data);
+            }
+            return datalist;
+        }
+    }
+
+    public List<Map<String, Object>> getPartnerPiUsages() throws SQLException {
+        String sql = "select partnername, partnerid, sum(qty) as totalqty, sum(balance + voidcount) as totalbalance, sum(qty) - sum(balance + voidcount) as totalusedamount from [dbo].[ProformaInvoice] as pi left join [dbo].[Partners] as p on p.syskey = pi.partnersyskey group by partnersyskey, partnername, partnerid";
+        try (Connection connection = DbFactory.getConnection();
+                PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            ResultSet rs = stmt.executeQuery();
+            List<Map<String, Object>> datalist = new ArrayList<>();
+            while (rs.next()) {
+                Map<String, Object> data = new HashMap<>();
+                data.put("partnerid", rs.getString("partnerid"));
+                data.put("partnername", rs.getString("partnername"));
+                data.put("totalqty", rs.getInt("totalqty"));
+                data.put("totalbalance", rs.getInt("totalbalance"));
+                data.put("totalusedamount", rs.getInt("totalusedamount"));
+                datalist.add(data);
+            }
+            return datalist;
+        }
+    }
+
+    public List<Map<String, Object>> getPartnerPiUsagesByCenter(String centerid) throws SQLException {
+        String sql = "select partnername, partnerid, sum(qty) as totalqty, sum(balance + voidcount) as totalbalance, sum(qty) - sum(balance + voidcount) as totalusedamount from [dbo].[ProformaInvoice] as pi left join [dbo].[Partners] as p on p.syskey = pi.partnersyskey where centerid = ? group by partnersyskey, partnername, partnerid";
+        try (Connection connection = DbFactory.getConnection();
+                PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, centerid);
+            ResultSet rs = stmt.executeQuery();
+            List<Map<String, Object>> datalist = new ArrayList<>();
+            while (rs.next()) {
+                Map<String, Object> data = new HashMap<>();
+                data.put("partnerid", rs.getString("partnerid"));
+                data.put("partnername", rs.getString("partnername"));
+                data.put("totalqty", rs.getInt("totalqty"));
+                data.put("totalbalance", rs.getInt("totalbalance"));
+                data.put("totalusedamount", rs.getInt("totalusedamount"));
+                datalist.add(data);
+            }
+            return datalist;
+        }
+    }
+
+    public List<Map<String, Object>> getPiUsagesOnCenterByPartner(String partnersyskey) throws SQLException {
+        String sql = "select centerid, sum(qty) as totalqty, sum(balance + voidcount) as totalbalance, sum(qty) - sum(balance + voidcount) as totalusedamount from [dbo].[ProformaInvoice] where partnersyskey = ? group by centerid";
+        try (Connection connection = DbFactory.getConnection();
+                PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, partnersyskey);
+            ResultSet rs = stmt.executeQuery();
+            List<Map<String, Object>> datalist = new ArrayList<>();
+            while (rs.next()) {
+                Map<String, Object> data = new HashMap<>();
+                data.put("centerid", rs.getString("centerid"));
+                data.put("totalqty", rs.getInt("totalqty"));
+                data.put("totalbalance", rs.getInt("totalbalance"));
+                data.put("totalusedamount", rs.getInt("totalusedamount"));
+                datalist.add(data);
+            }
+            return datalist;
+        }
+    }
 }
