@@ -12,9 +12,18 @@ public class TokenData {
     private String contactperson;
     private String userlevel;
     private String dvrsusername;
+    private String emailaddress;
 
     public String getUserid() {
         return userid;
+    }
+
+    public String getEmailaddress() {
+        return emailaddress;
+    }
+
+    public void setEmailaddress(String emailaddress) {
+        this.emailaddress = emailaddress;
     }
 
     public String getDvrsusername() {
