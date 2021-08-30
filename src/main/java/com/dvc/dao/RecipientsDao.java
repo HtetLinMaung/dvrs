@@ -235,7 +235,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         List<String> keys = Arrays.asList("r.syskey", "r.remark", "rid", "cid", "recipientsname", "fathername",
                 "gender", "dob", "age", "nric", "passport", "nationality", "organization", "address1", "township",
                 "division", "mobilephone", "registerationstatus", "vaccinationstatus", "qrtoken", "partnerid",
-                "voidstatus", "partnername", "r.dose", "r.t10");
+                "voidstatus", "partnername", "r.dose", "r.t10", "firstdosedate", "firstdosetime", "seconddosetime");
         String query = String.format(
                 "Recipients as r left join Partners as p on r.partnersyskey = p.syskey WHERE r.recordstatus <> 4 AND %s = ?",
                 key);
@@ -558,9 +558,10 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
     }
 
     public List<Map<String, Object>> getSubmittedRecipient(String cid) throws SQLException, IOException {
-        List<String> keys = new EasyData<UpdateRecipientDto>(new UpdateRecipientDto()).toMap().entrySet().stream()
-                .map(p -> p.getKey()).collect(Collectors.toList());
-        return getDBClient().getMany(keys, "SubmittedRecipients where cid = ? and recordstatus <> 30");
+        List<String> keys = Arrays.asList("cid", "nric", "passport", "gender", "dob", "age", "recipientsname",
+                "mobilephone", "address1", "firstdosedate", "firstdosetime", "seconddosetime", "userid", "username");
+        return getDBClient().getMany(keys, "SubmittedRecipients where cid = ? and recordstatus <> 30",
+                Arrays.asList(cid));
     }
 
     public int submitRecipient(UpdateRecipientDto dto) throws SQLException, IOException {

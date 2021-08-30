@@ -33,7 +33,7 @@ public class GetSubmittedRecipient {
      * host}/api/GetSubmittedRecipient?name=HTTP%20Query
      */
     @FunctionName("getsubmittedrecipient")
-    public HttpResponseMessage run(@HttpTrigger(name = "req", methods = { HttpMethod.GET,
+    public HttpResponseMessage run(@HttpTrigger(name = "req", methods = {
             HttpMethod.POST }, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
             final ExecutionContext context) {
         context.getLogger().info("Java HTTP trigger processed a request.");
