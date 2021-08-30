@@ -368,7 +368,7 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                             recipient.put("firstdosedate", date);
                             recipient.put("firstdosetime", firstdosetime);
                             recipient.put("seconddosetime", firstdosetime);
-                        } else if (srno > 16500 && srno < 37500) {
+                        } else if (srno > 16500 && srno <= 37500) {
                             int slot = (int) Math.ceil((double) (srno - 16500) / 500);
                             int day = (int) Math.ceil((double) slot / 6);
                             int timeslot = slot - ((day - 1) * 6);
