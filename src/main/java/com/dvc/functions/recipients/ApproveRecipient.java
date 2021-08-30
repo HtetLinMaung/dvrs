@@ -48,13 +48,20 @@ public class ApproveRecipient {
             dto.setUsername(tokenData.getDvrsusername());
 
             RecipientsDao dao = new RecipientsDao();
-            if (tokenData.getRole().equals("Partner")
-                    && !dao.isOwnRecipientV2(dto.getCid(), tokenData.getPartnersyskey())) {
+            if (tokenData.getRole().equals("Partner")) {
                 BaseResponse res = new BaseResponse();
                 res.setRetcode(ServerStatus.UNAUTHORIZED);
                 res.setRetmessage(ServerMessage.UNAUTHORIZED);
                 return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(res).build();
             }
+            // if (tokenData.getRole().equals("Partner")
+            // && !dao.isOwnRecipientV2(dto.getCid(), tokenData.getPartnersyskey())) {
+            // BaseResponse res = new BaseResponse();
+            // res.setRetcode(ServerStatus.UNAUTHORIZED);
+            // res.setRetmessage(ServerMessage.UNAUTHORIZED);
+            // return
+            // request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(res).build();
+            // }
             dao.approveRecipientV2(dto);
             BaseResponse resData = new BaseResponse();
 
