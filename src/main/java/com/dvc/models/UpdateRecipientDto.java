@@ -9,6 +9,8 @@ public class UpdateRecipientDto {
     private String gender;
     private String dob;
     private String recipientsname;
+    private String fathername;
+    private String nationality;
     private String mobilephone;
     private String address1;
     private String firstdosedate;
@@ -16,6 +18,22 @@ public class UpdateRecipientDto {
     private String seconddosetime;
     private String userid;
     private String username;
+
+    public String getFathername() {
+        return fathername;
+    }
+
+    public void setFathername(String fathername) {
+        this.fathername = fathername;
+    }
+
+    public String getNationality() {
+        return nationality;
+    }
+
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
+    }
 
     public String getUserid() {
         return userid;
