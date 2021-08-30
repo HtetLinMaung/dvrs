@@ -558,7 +558,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
     }
 
     public List<Map<String, Object>> getSubmittedRecipient(String cid) throws SQLException, IOException {
-        List<String> keys = Arrays.asList("cid", "nric", "passport", "gender", "dob", "age", "recipientsname",
+        List<String> keys = Arrays.asList("syskey", "cid", "nric", "passport", "gender", "dob", "age", "recipientsname",
                 "mobilephone", "address1", "firstdosedate", "firstdosetime", "seconddosetime", "userid", "username");
         return getDBClient().getMany(keys, "SubmittedRecipients where cid = ? and recordstatus <> 30",
                 Arrays.asList(cid));
@@ -610,6 +610,8 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         }
         final String now = Instant.now().toString();
         Map<String, Object> args = datalist.get(0);
+        String submittedsyskey = (String) args.get("syskey");
+        args.remove("syskey");
         Map<String, Object> oldRecipient = getCard(cid);
         long refno = KeyGenerator.generateSyskey();
         oldRecipient.put("syskey", KeyGenerator.generateSyskey());
@@ -631,7 +633,10 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         recipient.put("pairkey", 2);
 
         getDBClient().insertMany("RecipientsHistory", Arrays.asList(oldRecipient, recipient));
-        return 1;
-
+        Map<String, Object> data = new HashMap<>();
+        data.put("syskey", submittedsyskey);
+        data.put("modifieddate", now);
+        data.put("recordstatus", 30);
+        return getDBClient().updateOne("SubmittedRecipients", "syskey", data);
     }
 }
