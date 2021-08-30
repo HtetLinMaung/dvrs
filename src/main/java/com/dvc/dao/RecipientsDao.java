@@ -603,6 +603,43 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
                 "Recipients where cid = ?", Arrays.asList(cid));
     }
 
+    public int approveRecipientV2(UpdateRecipientDto dto) throws SQLException, IOException {
+
+        final String now = Instant.now().toString();
+
+        Map<String, Object> oldRecipient = getCard(dto.getCid());
+        long refno = KeyGenerator.generateSyskey();
+        oldRecipient.put("syskey", KeyGenerator.generateSyskey());
+        oldRecipient.put("userid", dto.getUserid());
+        oldRecipient.put("username", dto.getUsername());
+        oldRecipient.put("createddate", now);
+        oldRecipient.put("modifieddate", now);
+        oldRecipient.put("refno", refno);
+        oldRecipient.put("pairkey", 1);
+
+        Map<String, Object> args = new EasyData<UpdateRecipientDto>(dto).toMap();
+        if (!oldRecipient.get("nric").equals(dto.getNric())
+                || !oldRecipient.get("passport").equals(dto.getPassport())) {
+            args.put("recipientsname", oldRecipient.get("recipientsname"));
+        } else if (!oldRecipient.get("recipientsname").equals(dto.getRecipientsname())) {
+            args.put("passport", oldRecipient.get("passport"));
+            args.put("nric", oldRecipient.get("nric"));
+        }
+
+        getDBClient().updateOne("Recipients", "cid", args);
+        Map<String, Object> recipient = getCard(dto.getCid());
+        recipient.put("syskey", KeyGenerator.generateSyskey());
+        recipient.put("userid", dto.getUserid());
+        recipient.put("username", dto.getUsername());
+        recipient.put("createddate", now);
+        recipient.put("modifieddate", now);
+        recipient.put("refno", refno);
+        recipient.put("pairkey", 2);
+
+        getDBClient().insertMany("RecipientsHistory", Arrays.asList(oldRecipient, recipient));
+        return 1;
+    }
+
     public int approveRecipient(String cid, String userid, String username) throws SQLException, IOException {
         List<Map<String, Object>> datalist = getSubmittedRecipient(cid);
         if (datalist.size() == 0) {

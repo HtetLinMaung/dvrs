@@ -9,6 +9,8 @@ import com.dvc.middlewares.SecurityMiddleware;
 import com.dvc.models.BaseResponse;
 import com.dvc.models.MiddlewareData;
 import com.dvc.models.TokenData;
+import com.dvc.models.UpdateRecipientDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.HttpMethod;
 import com.microsoft.azure.functions.HttpRequestMessage;
@@ -30,7 +32,7 @@ public class ApproveRecipient {
      */
     @FunctionName("approverecipient")
     public HttpResponseMessage run(@HttpTrigger(name = "req", methods = {
-            HttpMethod.GET }, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
+            HttpMethod.POST }, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
             final ExecutionContext context) {
         context.getLogger().info("Java HTTP trigger processed a request.");
 
@@ -39,19 +41,21 @@ public class ApproveRecipient {
             if (!auth.isSuccess()) {
                 return auth.getResponse();
             }
-            String cid = request.getQueryParameters().get("cid");
+            UpdateRecipientDto dto = new ObjectMapper().readValue(request.getBody().get(), UpdateRecipientDto.class);
 
             TokenData tokenData = auth.getTokenData();
+            dto.setUserid(tokenData.getDvrsuserid());
+            dto.setUsername(tokenData.getDvrsusername());
 
             RecipientsDao dao = new RecipientsDao();
-            if (tokenData.getRole().equals("Partner")) {
+            if (tokenData.getRole().equals("Partner")
+                    && !dao.isOwnRecipientV2(dto.getCid(), tokenData.getPartnersyskey())) {
                 BaseResponse res = new BaseResponse();
                 res.setRetcode(ServerStatus.UNAUTHORIZED);
                 res.setRetmessage(ServerMessage.UNAUTHORIZED);
                 return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(res).build();
             }
-
-            dao.approveRecipient(cid, tokenData.getDvrsuserid(), tokenData.getDvrsusername());
+            dao.approveRecipientV2(dto);
             BaseResponse resData = new BaseResponse();
 
             return request.createResponseBuilder(HttpStatus.OK).body(resData).build();
