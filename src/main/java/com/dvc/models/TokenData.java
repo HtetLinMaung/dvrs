@@ -17,14 +17,6 @@ public class TokenData {
         return userid;
     }
 
-    public String getEmailaddress() {
-        return emailaddress;
-    }
-
-    public void setEmailaddress(String emailaddress) {
-        this.emailaddress = emailaddress;
-    }
-
     public String getDvrsusername() {
         return dvrsusername;
     }
