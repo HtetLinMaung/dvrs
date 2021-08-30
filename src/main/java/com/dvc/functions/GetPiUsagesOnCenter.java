@@ -41,8 +41,14 @@ public class GetPiUsagesOnCenter {
                 return auth.getResponse();
             }
             PIDao dao = new PIDao();
-            Map<String, Object> res = new EasyData<BaseResponse>(new BaseResponse()).toMap();
 
+            if (auth.getTokenData().getRole().equals("Partner")) {
+                BaseResponse res = new BaseResponse();
+                res.setRetcode(ServerStatus.UNAUTHORIZED);
+                res.setRetmessage(ServerMessage.UNAUTHORIZED);
+                return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(res).build();
+            }
+            Map<String, Object> res = new EasyData<BaseResponse>(new BaseResponse()).toMap();
             if (request.getQueryParameters().get("partnersyskey") == null) {
                 res.put("datalist", dao.getPiUsagesOnCenter());
             } else {
