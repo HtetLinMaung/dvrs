@@ -8,13 +8,14 @@ import java.util.Map;
 import com.dvc.models.FilterDto;
 import com.dvc.models.PaginationResponse;
 import com.dvc.models.RecipientsDto;
+import com.dvc.models.UpdateRecipientDto;
 
 public interface IRecipientsDao {
     PaginationResponse<Map<String, Object>> getRecipients(FilterDto dto) throws SQLException;
 
     Map<String, Object> getRecipient(long syskey) throws SQLException;
 
-    int updateRecipient(RecipientsDto dto) throws SQLException, IOException;
+    int updateRecipient(UpdateRecipientDto dto) throws SQLException, IOException;
 
     int deleteRecipient(RecipientsDto dto) throws SQLException;
 

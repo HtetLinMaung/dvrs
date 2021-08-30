@@ -8,7 +8,6 @@ import com.dvc.dao.RecipientsDao;
 import com.dvc.middlewares.SecurityMiddleware;
 import com.dvc.models.BaseResponse;
 import com.dvc.models.MiddlewareData;
-import com.dvc.models.RecipientsDto;
 import com.dvc.models.TokenData;
 import com.dvc.models.UpdateRecipientDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,16 +23,16 @@ import com.microsoft.azure.functions.annotation.HttpTrigger;
 /**
  * Azure Functions with HTTP Trigger.
  */
-public class UpdateRecipient {
+public class SubmitRecipient {
     /**
-     * This function listens at endpoint "/api/UpdateRecipient". Two ways to invoke
+     * This function listens at endpoint "/api/SubmitRecipient". Two ways to invoke
      * it using "curl" command in bash: 1. curl -d "HTTP Body" {your
-     * host}/api/UpdateRecipient 2. curl {your
-     * host}/api/UpdateRecipient?name=HTTP%20Query
+     * host}/api/SubmitRecipient 2. curl {your
+     * host}/api/SubmitRecipient?name=HTTP%20Query
      */
-    @FunctionName("updaterecipient")
+    @FunctionName("submitrecipient")
     public HttpResponseMessage run(@HttpTrigger(name = "req", methods = {
-            HttpMethod.PUT }, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
+            HttpMethod.POST }, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
             final ExecutionContext context) {
         context.getLogger().info("Java HTTP trigger processed a request.");
 
@@ -47,15 +46,18 @@ public class UpdateRecipient {
             TokenData tokenData = auth.getTokenData();
             dto.setUserid(tokenData.getDvrsuserid());
             dto.setUsername(tokenData.getDvrsusername());
-            String partnersyskey = auth.getTokenData().getPartnersyskey();
-            
-            int result = new RecipientsDao().updateRecipient(dto);
-            BaseResponse resData = new BaseResponse();
-            if (result == 0) {
-                resData.setRetcode(ServerStatus.INVALID_REQUEST);
-                resData.setRetmessage(ServerMessage.INVALID_REQUEST);
-                return request.createResponseBuilder(HttpStatus.NOT_FOUND).body(resData).build();
+
+            RecipientsDao dao = new RecipientsDao();
+            if (tokenData.getRole().equals("Partner")
+                    && !dao.isOwnRecipientV2(dto.getCid(), tokenData.getPartnersyskey())) {
+                BaseResponse res = new BaseResponse();
+                res.setRetcode(ServerStatus.UNAUTHORIZED);
+                res.setRetmessage(ServerMessage.UNAUTHORIZED);
+                return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(res).build();
             }
+
+            dao.submitRecipient(dto);
+            BaseResponse resData = new BaseResponse();
 
             return request.createResponseBuilder(HttpStatus.OK).body(resData).build();
         } catch (Exception e) {

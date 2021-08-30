@@ -25,10 +25,12 @@ import com.dvc.models.FilterDto;
 import com.dvc.models.PaginationResponse;
 import com.dvc.models.RecipientsDto;
 import com.dvc.models.ReportDto;
-import com.dvc.utils.Cid;
+import com.dvc.models.UpdateRecipientDto;
 import com.dvc.utils.EasyData;
 import com.dvc.utils.EasySql;
 import com.dvc.utils.KeyGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class RecipientsDao extends BaseDao implements IRecipientsDao {
 
@@ -137,15 +139,12 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
     }
 
     @Override
-    public int updateRecipient(RecipientsDto dto) throws SQLException, IOException {
-        EasyData<RecipientsDto> easyData = new EasyData<>(dto);
-        Map<String, Object> args = easyData.toMap();
+    public int updateRecipient(UpdateRecipientDto dto) throws SQLException, IOException {
+        EasyData<UpdateRecipientDto> easyData = new EasyData<>(dto);
+        Map<String, Object> args = easyData.toMapExcept(Arrays.asList("userid", "username"));
         args.put("modifieddate", Instant.now().toString());
-        String dob = dto.getDob();
-        int dobyear = Integer.parseInt(dob.substring(0, 4));
-        int year = LocalDate.now().getYear();
-        args.put("age", year - dobyear);
-        return new EasySql(DbFactory.getConnection()).updateOne("Recipients", "syskey", args);
+        args.put("age", dto.getAge());
+        return new EasySql(DbFactory.getConnection()).updateOne("Recipients", "cid", args);
     }
 
     public int updateRecipient(Map<String, Object> args) throws SQLException {
@@ -293,6 +292,14 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
     public boolean isOwnRecipient(String syskey, String partnersyskey) throws SQLException {
         int total = getTotalCount("Recipients where syskey = ? and partnersyskey = ?",
                 Arrays.asList(syskey, partnersyskey));
+        if (total > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isOwnRecipientV2(String cid, String partnersyskey) throws SQLException {
+        int total = getTotalCount("Recipients where cid = ? and partnersyskey = ?", Arrays.asList(cid, partnersyskey));
         if (total > 0) {
             return true;
         }
@@ -548,5 +555,41 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
             return true;
         }
         return false;
+    }
+
+    public List<Map<String, Object>> getSubmittedRecipient(String cid) throws SQLException, IOException {
+        List<String> keys = new EasyData<UpdateRecipientDto>(new UpdateRecipientDto()).toMap().entrySet().stream()
+                .map(p -> p.getKey()).collect(Collectors.toList());
+        return getDBClient().getMany(keys, "SubmittedRecipients where cid = ? and recordstatus <> 30");
+    }
+
+    public int submitRecipient(UpdateRecipientDto dto) throws SQLException, IOException {
+        final String now = Instant.now().toString();
+        Map<String, Object> args = new EasyData<UpdateRecipientDto>(dto).toMap();
+        Map<String, Object> oldRecipient = getDBClient().getOne(Arrays.asList("nric", "passport", "recipientsname"),
+                "Recipients where cid = ?", Arrays.asList(dto.getCid()));
+
+        if (!oldRecipient.get("nric").equals(dto.getNric())
+                || !oldRecipient.get("passport").equals(dto.getPassport())) {
+            args.put("recipientsname", oldRecipient.get("recipientsname"));
+        } else if (!oldRecipient.get("recipientsname").equals(dto.getRecipientsname())) {
+            args.put("passport", oldRecipient.get("passport"));
+            args.put("nric", oldRecipient.get("nric"));
+        }
+
+        args.put("modifieddate", now);
+        args.put("age", dto.getAge());
+        List<Map<String, Object>> datalist = getDBClient().getMany(Arrays.asList("syskey"),
+                "SubmittedRecipients where cid = ? and recordstatus <> 30", Arrays.asList(dto.getCid()));
+        if (datalist.size() > 0) {
+            args.put("syskey", datalist.get(0).get("syskey"));
+            args.remove("cid");
+            return getDBClient().updateOne("SubmittedRecipients", "syskey", args);
+        }
+
+        args.put("syskey", KeyGenerator.generateSyskey());
+        args.put("createddate", now);
+        getDBClient().insertMany("SubmittedRecipients", Arrays.asList(args));
+        return 1;
     }
 }
