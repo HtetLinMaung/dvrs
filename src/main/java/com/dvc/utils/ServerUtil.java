@@ -291,4 +291,16 @@ public class ServerUtil {
 		return "0";
 	}
 
+	@SuppressWarnings("unchecked")
+	public static boolean isBTokenAuthRecipient(String token) {
+		String body = TokenUtil.getTokenData(token, "b");
+		if (body != null) {
+			Map<String, Object> resultMap = new Gson().fromJson(body, Map.class);
+			if (getString(resultMap.get("userlevel")).equals("501")) {
+				return true;
+			}
+			return false;
+		}
+		return false;
+	}
 }

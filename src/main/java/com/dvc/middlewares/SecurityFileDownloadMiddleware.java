@@ -66,7 +66,8 @@ public class SecurityFileDownloadMiddleware {
                 res.setRetmessage(ServerMessage.TOKEN_EXPIRED);
                 middlewareData.setResponse(request.createResponseBuilder(HttpStatus.UNAUTHORIZED).body(res).build());
             }
-            if (!(ServerUtil.isBTokenAuthAdmin(btoken) || ServerUtil.isBTokenAuthPartner(btoken))) {
+            if (!(ServerUtil.isBTokenAuthAdmin(btoken) || ServerUtil.isBTokenAuthPartner(btoken)
+                    || ServerUtil.isBTokenAuthRecipient(btoken))) {
                 res.setRetcode(ServerStatus.UNAUTHORIZED);
                 res.setRetmessage(ServerMessage.UNAUTHORIZED);
                 middlewareData.setResponse(request.createResponseBuilder(HttpStatus.UNAUTHORIZED).body(res).build());
