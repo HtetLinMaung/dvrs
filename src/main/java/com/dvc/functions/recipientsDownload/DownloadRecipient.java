@@ -67,6 +67,7 @@ public class DownloadRecipient {
                 long recipientSyskey = 0l;
                 long partnerSyskey = 0l;
                 boolean isAdmin = false;
+                boolean isRecipient = false;
 
                 String encodedURI = syskey.replace(" ", "+");
                 syskey = AESAlgorithm.decryptString(encodedURI);
@@ -80,6 +81,7 @@ public class DownloadRecipient {
                             btoken = btoken.replace("Bearer ", "");
                         }
                         isAdmin = ServerUtil.isBTokenAuthAdmin(btoken);
+                        isRecipient = ServerUtil.isBTokenAuthRecipient(btoken);
                         partnerSyskey = Long.parseLong(ServerUtil.getPartnerSkFromBToken(btoken));
                     }
                 } catch (NumberFormatException e) {
@@ -88,7 +90,7 @@ public class DownloadRecipient {
                 RecipentsData recipientsData = new RecipentsData();
 
                 recipientsData = new RecipientsDownloadDao().getRecipentBySyskeyOrCID(recipientSyskey, true, "0",
-                        partnerSyskey, isAdmin);
+                        partnerSyskey, isAdmin, isRecipient);
                 byte[] pdfByte = new PDFUtil().writePdf(Arrays.asList(recipientsData));
                 String pdfName = URLEncoder.encode(recipientsData.getPdfName() + PDFUtil.PDF_EXTENSION, "UTF-8");
                 pdfName = pdfName.replaceAll("\\+", " ");

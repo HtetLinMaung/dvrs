@@ -64,8 +64,10 @@ public class PreviewRecipient {
 
                 context.getLogger()
                         .info(String.format("Retrieving data was successed with recipient syskey : %s", syskey));
-                return request.createResponseBuilder(HttpStatus.OK).body(new RecipientsDownloadDao()
-                        .getRecipentBySyskeyOrCID(recipientSyskey, true, "0", partnerSyskey, isAdmin)).build();
+                return request
+                        .createResponseBuilder(HttpStatus.OK).body(new RecipientsDownloadDao()
+                                .getRecipentBySyskeyOrCID(recipientSyskey, true, "0", partnerSyskey, isAdmin, true))
+                        .build();
             } catch (JsonProcessingException e) {
                 context.getLogger().warning(e.getMessage());
                 e.printStackTrace();

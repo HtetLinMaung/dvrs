@@ -129,27 +129,26 @@ public class RecipientsDownloadDao {
     }
 
     public RecipentsData getRecipentBySyskeyOrCID(long syskey, boolean isSyskey, String cid, long partnerSyskey,
-            boolean isAdmin) {
+            boolean isAdmin, boolean isRecipient) {
         RecipentsData recipentsData = new RecipentsData();
         try (Connection conn = DbFactory.getConnection()) {
             StringBuilder builder = new StringBuilder();
             builder.append("SELECT syskey,cid,recipientsname,gender,age,nric,organization,address1,passport"
                     + ",mobilephone,qrtoken,pisyskey,BatchUploadSysKey,BatchRefCode,FatherName,Nationality,Dob,VoidStatus,firstdosedate,firstdosetime,seconddosetime  "
                     + " FROM Recipients WHERE ");
-            if (isSyskey && !isAdmin) {
+            if (isSyskey && !isAdmin && !isRecipient) {
                 builder.append(" Recipients.syskey =? and Recipients.PartnerSyskey = ? ");
-            } else if (isSyskey && isAdmin) {
+            } else if ((isSyskey && isAdmin) || isRecipient) {
                 builder.append(" Recipients.syskey =? ");
             } else {
                 builder.append(" Recipients.cid =? ");
             }
             builder.append(" AND Recipients.recordstatus= 1 ");
-
             PreparedStatement ps = conn.prepareStatement(builder.toString());
-            if (isSyskey && !isAdmin) {
+            if (isSyskey && !isAdmin && !isRecipient) {
                 ps.setLong(1, syskey);
                 ps.setLong(2, partnerSyskey);
-            } else if (isSyskey && isAdmin) {
+            } else if ((isSyskey && isAdmin) || isRecipient) {
                 ps.setLong(1, syskey);
             } else {
                 ps.setString(1, cid);
