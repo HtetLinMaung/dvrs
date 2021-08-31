@@ -293,13 +293,14 @@ public class PIDao extends BaseDao implements IPIDao {
     }
 
     public List<Map<String, Object>> getPiUsagesOnCenter() throws SQLException {
-        String sql = "select centerid, sum(qty) as totalqty, sum(balance + voidcount) as totalbalance, sum(qty) - sum(balance + voidcount) as totalusedamount from [dbo].[ProformaInvoice] group by centerid";
+        String sql = "select pi.centerid, c.centername, sum(qty) as totalqty, sum(balance + voidcount) as totalbalance, sum(qty) - sum(balance + voidcount) as totalusedamount from [dbo].[ProformaInvoice] as pi left join Centers as c on c.centerid = pi.centerid  group by pi.centerid, c.centername";
         try (Connection connection = DbFactory.getConnection();
                 PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             List<Map<String, Object>> datalist = new ArrayList<>();
             while (rs.next()) {
                 Map<String, Object> data = new HashMap<>();
+                data.put("centername", rs.getString("centername"));
                 data.put("centerid", rs.getString("centerid"));
                 data.put("totalqty", rs.getInt("totalqty"));
                 data.put("totalbalance", rs.getInt("totalbalance"));
@@ -351,7 +352,7 @@ public class PIDao extends BaseDao implements IPIDao {
     }
 
     public List<Map<String, Object>> getPiUsagesOnCenterByPartner(String partnersyskey) throws SQLException {
-        String sql = "select centerid, sum(qty) as totalqty, sum(balance + voidcount) as totalbalance, sum(qty) - sum(balance + voidcount) as totalusedamount from [dbo].[ProformaInvoice] where partnersyskey = ? group by centerid";
+        String sql = "select pi.centerid, c.centername, sum(qty) as totalqty, sum(balance + voidcount) as totalbalance, sum(qty) - sum(balance + voidcount) as totalusedamount from [dbo].[ProformaInvoice] as pi left join Centers as c on c.centerid = pi.centerid where partnersyskey = ? group by pi.centerid, c.centername";
         try (Connection connection = DbFactory.getConnection();
                 PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, partnersyskey);
@@ -359,6 +360,7 @@ public class PIDao extends BaseDao implements IPIDao {
             List<Map<String, Object>> datalist = new ArrayList<>();
             while (rs.next()) {
                 Map<String, Object> data = new HashMap<>();
+                data.put("centername", rs.getString("centername"));
                 data.put("centerid", rs.getString("centerid"));
                 data.put("totalqty", rs.getInt("totalqty"));
                 data.put("totalbalance", rs.getInt("totalbalance"));
