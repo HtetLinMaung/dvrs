@@ -87,7 +87,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
 
         String query = "";
         List<Map<String, Object>> datalist = new ArrayList<>();
-        if (dto.getRole().equals("Admin") || dto.getRole().equals("Finance")) {
+        if (!dto.getRole().equals("Partner")) {
 
             query = String.format(
                     "Recipients as r left join Partners as p on r.partnersyskey = p.syskey left join ProformaInvoice as pi on r.pisyskey = pi.syskey %s WHERE r.recordstatus <> 4 %s %s %s %s and (%s)",
