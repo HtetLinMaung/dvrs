@@ -121,10 +121,8 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         }
 
         PaginationResponse<Map<String, Object>> res = new PaginationResponse<>();
-        int totalcount = getTotalCount(query,
-                !dto.getRole().equals("Admin") && !dto.getRole().equals("Finance")
-                        ? Arrays.asList(dto.getPartnersyskey())
-                        : dto.getPartnersyskey().isEmpty() ? new ArrayList<>() : Arrays.asList(dto.getPartnersyskey()));
+        int totalcount = getTotalCount(query, dto.getRole().equals("Partner") ? Arrays.asList(dto.getPartnersyskey())
+                : dto.getPartnersyskey().isEmpty() ? new ArrayList<>() : Arrays.asList(dto.getPartnersyskey()));
         res.setDatalist(datalist);
         res.setPagesize(dto.getPagesize());
         res.setCurrentpage(dto.getCurrentpage());
