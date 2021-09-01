@@ -42,8 +42,9 @@ public class ApproveRecipient {
                 return auth.getResponse();
             }
             UpdateRecipientDto dto = new ObjectMapper().readValue(request.getBody().get(), UpdateRecipientDto.class);
-
+            context.getLogger().info(request.getBody().get());
             TokenData tokenData = auth.getTokenData();
+            context.getLogger().info(new ObjectMapper().writeValueAsString(tokenData));
             dto.setUserid(tokenData.getUserid());
             dto.setUsername(tokenData.getDvrsusername());
 

@@ -616,6 +616,15 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         oldRecipient.put("pairkey", 1);
 
         Map<String, Object> args = new EasyData<UpdateRecipientDto>(dto).toMap();
+        if (oldRecipient.get("nric") == null) {
+            oldRecipient.put("nric", "");
+        }
+        if (oldRecipient.get("passport") == null) {
+            oldRecipient.put("passport", "");
+        }
+        if (oldRecipient.get("recipientsname") == null) {
+            oldRecipient.put("recipientsname", "");
+        }
         if (!oldRecipient.get("nric").equals(dto.getNric())
                 || !oldRecipient.get("passport").equals(dto.getPassport())) {
             args.put("recipientsname", oldRecipient.get("recipientsname"));
