@@ -14,7 +14,7 @@ on r.pisyskey = pi.syskey left join [dbo].[Centers] as c on c.centerid = pi.cent
 -- scan not update
 select r.cid, q.userid, q.verifyat, dose, recipientsname, fathername, nric, passport, nationality, dob, 
 township, address1, mobilephone from [dbo].[Recipients] as r left join [dbo].[QRLog] as q on 
-q.cid = r.cid where dose = 0 and DATEDIFF(day, verifyat, '2021/08/31') = 0 and (r.cid like 'YGN10%' or r.cid like 'YGN0%')
+q.cid = r.cid where dose = 0 and DATEDIFF(day, verifyat, '2021/09/01') = 0 and (r.cid like 'YGN10%' or r.cid like 'YGN0%')
 
 update [dbo].[ProformaInvoice] set qty = 15000, balance = 14969 where pirefnumber = 'PI000096'
 select qty, balance, voidcount from [dbo].[ProformaInvoice] where pirefnumber = 'PI000096'

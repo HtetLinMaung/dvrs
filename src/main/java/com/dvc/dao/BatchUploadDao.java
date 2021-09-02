@@ -293,6 +293,13 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                     recipient.put("partnersyskey", dto.getPartnersyskey());
                     recipient.put("voidstatus", 1);
                     recipient.put("centerid", pi.get("centerid"));
+                    recipient.put("vaccinationcenter", m.get("vaccinationcenter"));
+                    recipient.put("ward", m.get("ward"));
+                    recipient.put("street", m.get("street"));
+                    recipient.put("prefixnrc", m.get("prefixnrc"));
+                    recipient.put("nrccode", m.get("nrccode"));
+                    recipient.put("nrctype", m.get("nrctype"));
+                    recipient.put("nrcno", m.get("nrcno"));
                     if (pi.get("centerid").equals("YGN1")) {
                         if (srno <= 6300) {
                             int slot = (int) Math.ceil((double) srno / 350);
@@ -845,7 +852,8 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
         keys.add("syskey");
         keys.add("batchrefcode");
         keys.addAll(Arrays.asList("serialno", "recipientsname", "gender", "fathername", "dob", "nric", "passport",
-                "nationality", "organization", "mobilephone", "division", "township", "address1", "remark"));
+                "nationality", "organization", "mobilephone", "division", "township", "address1", "remark", "prefixnrc",
+                "nrctype", "nrcno", "nrccode", "occupation", "vaccinationcenter", "ward", "street"));
         keys.add("partnersyskey");
         return new EasySql(DbFactory.getConnection()).getMany(keys,
                 "BatchDetails where batchuploadsyskey = ? and recordstatus = ? order by serialno",

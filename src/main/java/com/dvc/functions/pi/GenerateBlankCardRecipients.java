@@ -133,6 +133,13 @@ public class GenerateBlankCardRecipients {
                 map.put("voidstatus", 1);
                 map.put("centerid", pi.get("centerid"));
                 map.put("batchrefcode", batch.get("batchrefcode") + "-" + String.valueOf(i++));
+                map.put("vaccinationcenter", "");
+                map.put("ward", "");
+                map.put("street", "");
+                map.put("prefixnrc", "");
+                map.put("nrccode", "");
+                map.put("nrctype", "");
+                map.put("nrcno", "");
                 QRYData data = new QRYData();
                 data.setCid(serial);
                 // if (pi.get("centerid").equals("YGN1")) {

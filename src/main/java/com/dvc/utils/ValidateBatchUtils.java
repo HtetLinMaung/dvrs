@@ -16,7 +16,9 @@ import com.dvc.models.ValidationResult;
 public class ValidateBatchUtils {
     public static boolean isGenderValid(String gender) {
         String g = gender.replaceAll("\\s", "");
-        return Arrays.asList("M", "F").contains(g) || g.matches("\\u1000\\u103b\\u102c\\u1038") || g.matches("\\u1019");
+        // return Arrays.asList("M", "F").contains(g) ||
+        // g.matches("\\u1000\\u103b\\u102c\\u1038") || g.matches("\\u1019");
+        return g.matches("\\u1000\\u103b\\u102c\\u1038") || g.matches("\\u1019");
     }
 
     public static String normalizeDob(String dob) {
