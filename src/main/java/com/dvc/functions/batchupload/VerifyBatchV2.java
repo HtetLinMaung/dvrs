@@ -227,56 +227,65 @@ public class VerifyBatchV2 {
                             }
 
                             String prefixnrc = (String) m.get("prefixnrc");
-                            String[] prefixnrcarr = prefixnrc.split("_");
-                            String nric = "";
-                            if (prefixnrcarr.length == 2) {
-                                nric += prefixnrcarr[1];
-                            }
-                            boolean isPrefixNrc = CommonConstants.PREFIX_NRCS.contains(prefixnrc.trim());
-                            if (!isPrefixNrc) {
-                                isValid = false;
-                                descriptionlist.add(headerDesc.get("prefixnrc") + " is invalid!");
-                                Map<String, Object> keyData = new HashMap<>();
-                                keyData.put("key", "nric");
-                                keyData.put("description", headerDesc.get("prefixnrc") + " is invalid");
-                                keys.add(keyData);
-                            }
-
                             String nrccode = (String) m.get("nrccode");
-                            if (isPrefixNrc
-                                    && !CommonConstants.getNrcCodes(prefixnrc.trim()).contains(nrccode.trim())) {
-                                isValid = false;
-                                descriptionlist.add(headerDesc.get("nrccode") + " is invalid!");
-                                Map<String, Object> keyData = new HashMap<>();
-                                keyData.put("key", "nric");
-                                keyData.put("description", headerDesc.get("nrccode") + " is invalid");
-                                keys.add(keyData);
-                            }
-                            nric += "/" + nrccode;
-
                             String nrctype = (String) m.get("nrctype");
-                            if (!CommonConstants.NATIONALITY_CODES.contains(nrctype.trim())) {
-                                isValid = false;
-                                descriptionlist.add(headerDesc.get("nrctype") + " is invalid!");
-                                Map<String, Object> keyData = new HashMap<>();
-                                keyData.put("key", "nric");
-                                keyData.put("description", headerDesc.get("nrctype") + " is invalid");
-                                keys.add(keyData);
-                            }
-
-                            nric += "(" + nrctype + ")";
-
                             String nrcno = (String) m.get("nrcno");
-                            if (!nrcno.trim().matches("^[0-9\\u1040-\\u1049]{6}$")) {
-                                isValid = false;
-                                descriptionlist.add(headerDesc.get("nrcno") + " is invalid!");
-                                Map<String, Object> keyData = new HashMap<>();
-                                keyData.put("key", "nric");
-                                keyData.put("description", headerDesc.get("nrcno") + " is invalid");
-                                keys.add(keyData);
+
+                            if (prefixnrc.trim().isEmpty() && nrccode.trim().isEmpty() && nrctype.trim().isEmpty()
+                                    && nrcno.trim().isEmpty()) {
+                                m.put("nric", "");
+                            } else {
+                                String[] prefixnrcarr = prefixnrc.split("_");
+                                String nric = "";
+                                if (prefixnrcarr.length == 2) {
+                                    nric += prefixnrcarr[1];
+                                }
+                                boolean isPrefixNrc = CommonConstants.PREFIX_NRCS.contains(prefixnrc.trim());
+                                if (!isPrefixNrc) {
+                                    isValid = false;
+                                    descriptionlist.add(headerDesc.get("prefixnrc") + " is invalid!");
+                                    Map<String, Object> keyData = new HashMap<>();
+                                    keyData.put("key", "nric");
+                                    keyData.put("description", headerDesc.get("prefixnrc") + " is invalid");
+                                    keys.add(keyData);
+                                }
+
+                                if (isPrefixNrc
+                                        && !CommonConstants.getNrcCodes(prefixnrc.trim()).contains(nrccode.trim())) {
+                                    isValid = false;
+                                    descriptionlist.add(headerDesc.get("nrccode") + " is invalid!");
+                                    Map<String, Object> keyData = new HashMap<>();
+                                    keyData.put("key", "nric");
+                                    keyData.put("description", headerDesc.get("nrccode") + " is invalid");
+                                    keys.add(keyData);
+                                }
+                                if (!nrccode.trim().isEmpty()) {
+                                    nric += "/" + nrccode;
+                                }
+
+                                if (!CommonConstants.NATIONALITY_CODES.contains(nrctype.trim())) {
+                                    isValid = false;
+                                    descriptionlist.add(headerDesc.get("nrctype") + " is invalid!");
+                                    Map<String, Object> keyData = new HashMap<>();
+                                    keyData.put("key", "nric");
+                                    keyData.put("description", headerDesc.get("nrctype") + " is invalid");
+                                    keys.add(keyData);
+                                }
+                                if (!nrctype.trim().isEmpty()) {
+                                    nric += "(" + nrctype + ")";
+                                }
+
+                                if (!nrcno.trim().matches("^[0-9\\u1040-\\u1049]{6}$")) {
+                                    isValid = false;
+                                    descriptionlist.add(headerDesc.get("nrcno") + " is invalid!");
+                                    Map<String, Object> keyData = new HashMap<>();
+                                    keyData.put("key", "nric");
+                                    keyData.put("description", headerDesc.get("nrcno") + " is invalid");
+                                    keys.add(keyData);
+                                }
+                                nric += nrcno;
+                                m.put("nric", nric);
                             }
-                            nric += nrcno;
-                            m.put("nric", nric);
 
                             String mobilephone = (String) m.get("mobilephone");
                             if (!ValidateBatchUtils.isPhoneValid(mobilephone.trim())) {
