@@ -31,10 +31,12 @@ import com.dvc.utils.Converter;
 import com.dvc.utils.EasySql;
 import com.dvc.utils.ExcelUtil;
 import com.dvc.utils.KeyGenerator;
+import com.dvc.utils.LanguageUtils;
 import com.dvc.utils.Sender;
 import com.dvc.utils.ValidateBatchUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.myanmartools.ZawgyiDetector;
+import com.itextpdf.text.pdf.fonts.otf.Language;
 import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.HttpMethod;
 import com.microsoft.azure.functions.HttpRequestMessage;
@@ -144,10 +146,15 @@ public class VerifyBatchV2 {
                         Map<String, Object> m = map;
 
                         String str = (String) m.get("serialno");
+
                         if (str.isEmpty()) {
                             break;
                         }
                         try {
+                            str = LanguageUtils.toEngNum(str);
+                            if (str.contains("-")) {
+                                str = (String) m.get("serialno");
+                            }
                             Integer.parseInt(str.split("\\.")[0]);
                         } catch (Exception e) {
                             break;
@@ -175,7 +182,7 @@ public class VerifyBatchV2 {
                             boolean isValid = true;
                             List<Map<String, Object>> keys = new ArrayList<>();
 
-                            for (String key : Arrays.asList("recipientsname")) {
+                            for (String key : Arrays.asList("recipientsname", "fathername")) {
                                 // "nameicpp", "division", "township", "address1"
                                 if (((String) m.get(key)).isEmpty()) {
                                     isValid = false;
@@ -185,6 +192,18 @@ public class VerifyBatchV2 {
                                     keyData.put("description", headerDesc.get(key).trim() + " is blank");
                                     keys.add(keyData);
                                 }
+                            }
+
+                            String occupation = (String) m.get("occupation");
+                            occupation = occupation.split("\\.")[0].trim();
+                            m.put("occupation", occupation);
+                            if (Integer.parseInt(occupation) < 1 || Integer.parseInt(occupation) > 23) {
+                                isValid = false;
+                                descriptionlist.add(headerDesc.get("occupation") + " is invalid!");
+                                Map<String, Object> keyData = new HashMap<>();
+                                keyData.put("key", "occupation");
+                                keyData.put("description", headerDesc.get("occupation") + " is invalid!");
+                                keys.add(keyData);
                             }
 
                             if (!ValidateBatchUtils.isGenderValid(((String) m.get("gender")))) {
@@ -271,10 +290,66 @@ public class VerifyBatchV2 {
                                 keys.add(keyData);
                             }
 
-                            String street = (String) m.get("street");
-                            String ward = (String) m.get("ward");
-                            String township = (String) m.get("township");
                             String division = (String) m.get("division");
+                            boolean isDivision = CommonConstants.DIVISIONS.contains(division.trim());
+                            if (!isDivision) {
+                                isValid = false;
+                                descriptionlist.add(headerDesc.get("division") + " is invalid!");
+                                Map<String, Object> keyData = new HashMap<>();
+                                keyData.put("key", "division");
+                                keyData.put("description", headerDesc.get("division") + " is invalid!");
+                                keys.add(keyData);
+
+                                isValid = false;
+                                descriptionlist.add(headerDesc.get("township") + " is invalid!");
+                                keyData = new HashMap<>();
+                                keyData.put("key", "township");
+                                keyData.put("description", headerDesc.get("township") + " is invalid!");
+                                keys.add(keyData);
+
+                                isValid = false;
+                                descriptionlist.add(headerDesc.get("ward") + " is invalid!");
+                                keyData = new HashMap<>();
+                                keyData.put("key", "ward");
+                                keyData.put("description", headerDesc.get("ward") + " is invalid!");
+                                keys.add(keyData);
+                            }
+
+                            String township = (String) m.get("township");
+                            String ward = (String) m.get("ward");
+                            boolean isTownship = true;
+                            if (isDivision) {
+                                isTownship = CommonConstants.getTownships(division.trim()).contains(township.trim());
+                                if (!isTownship) {
+                                    isValid = false;
+                                    descriptionlist.add(headerDesc.get("township") + " is invalid!");
+                                    Map<String, Object> keyData = new HashMap<>();
+                                    keyData.put("key", "township");
+                                    keyData.put("description", headerDesc.get("township") + " is invalid!");
+                                    keys.add(keyData);
+
+                                    isValid = false;
+                                    descriptionlist.add(headerDesc.get("ward") + " is invalid!");
+                                    keyData = new HashMap<>();
+                                    keyData.put("key", "ward");
+                                    keyData.put("description", headerDesc.get("ward") + " is invalid!");
+                                    keys.add(keyData);
+                                }
+
+                            }
+
+                            if (isTownship && isDivision && !CommonConstants.getWards(division.trim(), township.trim())
+                                    .contains(ward.trim())) {
+                                isValid = false;
+                                descriptionlist.add(headerDesc.get("ward") + " is invalid!");
+                                Map<String, Object> keyData = new HashMap<>();
+                                keyData.put("key", "ward");
+                                keyData.put("description", headerDesc.get("ward") + " is invalid!");
+                                keys.add(keyData);
+                            }
+
+                            String street = (String) m.get("street");
+
                             String address1 = String.join("၊ ", Arrays.asList(street, ward, division, township));
                             m.put("address1", address1);
 
@@ -282,11 +357,12 @@ public class VerifyBatchV2 {
                             Map<String, Object> obj = new HashMap<>();
                             obj.put("errorlist", keys);
 
-                            info.setDescriptionlist(descriptionlist);
-                            if (!isValid)
+                            if (!isValid) {
+                                info.setDescriptionlist(descriptionlist);
                                 result.setValid(false);
-                            info.setLinenumber(Integer.parseInt(((String) m.get("serialno")).split("\\.")[0]));
-                            infolist.add(info);
+                                info.setLinenumber(Integer.parseInt(((String) m.get("serialno")).split("\\.")[0]));
+                                infolist.add(info);
+                            }
 
                             m.put("errorcolumn", new ObjectMapper().writeValueAsString(obj));
                             datalist.add(m);
