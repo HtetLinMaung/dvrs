@@ -786,8 +786,8 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
         keys.add("recordstatus");
         keys.add("recipientid");
         keys.addAll(Arrays.asList("serialno", "recipientsname", "gender", "fathername", "dob", "nric", "passport",
-                "nationality", "organization", "mobilephone", "division", "township", "address1", "remark",
-                "duration"));
+                "nationality", "organization", "mobilephone", "division", "township", "address1", "remark", "duration",
+                "ward", "occupation"));
         keys.add("errorcolumn");
         keys.remove("fileurl");
         String query = String.format(

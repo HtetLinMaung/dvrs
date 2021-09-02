@@ -237,7 +237,7 @@ public class VerifyBatchV2 {
                                 isValid = false;
                                 descriptionlist.add(headerDesc.get("prefixnrc") + " is invalid!");
                                 Map<String, Object> keyData = new HashMap<>();
-                                keyData.put("key", "prefixnrc");
+                                keyData.put("key", "nric");
                                 keyData.put("description", headerDesc.get("prefixnrc") + " is invalid");
                                 keys.add(keyData);
                             }
@@ -248,7 +248,7 @@ public class VerifyBatchV2 {
                                 isValid = false;
                                 descriptionlist.add(headerDesc.get("nrccode") + " is invalid!");
                                 Map<String, Object> keyData = new HashMap<>();
-                                keyData.put("key", "nrccode");
+                                keyData.put("key", "nric");
                                 keyData.put("description", headerDesc.get("nrccode") + " is invalid");
                                 keys.add(keyData);
                             }
@@ -259,7 +259,7 @@ public class VerifyBatchV2 {
                                 isValid = false;
                                 descriptionlist.add(headerDesc.get("nrctype") + " is invalid!");
                                 Map<String, Object> keyData = new HashMap<>();
-                                keyData.put("key", "nrctype");
+                                keyData.put("key", "nric");
                                 keyData.put("description", headerDesc.get("nrctype") + " is invalid");
                                 keys.add(keyData);
                             }
@@ -271,7 +271,7 @@ public class VerifyBatchV2 {
                                 isValid = false;
                                 descriptionlist.add(headerDesc.get("nrcno") + " is invalid!");
                                 Map<String, Object> keyData = new HashMap<>();
-                                keyData.put("key", "nrcno");
+                                keyData.put("key", "nric");
                                 keyData.put("description", headerDesc.get("nrcno") + " is invalid");
                                 keys.add(keyData);
                             }
