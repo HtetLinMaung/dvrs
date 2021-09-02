@@ -233,7 +233,8 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         List<String> keys = Arrays.asList("r.syskey", "r.remark", "rid", "cid", "recipientsname", "fathername",
                 "gender", "dob", "age", "nric", "passport", "nationality", "organization", "address1", "township",
                 "division", "mobilephone", "registerationstatus", "vaccinationstatus", "qrtoken", "partnerid",
-                "voidstatus", "partnername", "r.dose", "r.t10", "firstdosedate", "firstdosetime", "seconddosetime");
+                "voidstatus", "partnername", "r.dose", "r.t10", "firstdosedate", "firstdosetime", "seconddosetime",
+                "ward", "occupation");
         String query = String.format(
                 "Recipients as r left join Partners as p on r.partnersyskey = p.syskey WHERE r.recordstatus <> 4 AND %s = ?",
                 key);

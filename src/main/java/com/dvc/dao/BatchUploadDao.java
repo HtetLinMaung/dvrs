@@ -300,6 +300,7 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                     recipient.put("nrccode", m.get("nrccode"));
                     recipient.put("nrctype", m.get("nrctype"));
                     recipient.put("nrcno", m.get("nrcno"));
+                    recipient.put("occupation", m.get("occupation"));
                     if (pi.get("centerid").equals("YGN1")) {
                         if (srno <= 6300) {
                             int slot = (int) Math.ceil((double) srno / 350);

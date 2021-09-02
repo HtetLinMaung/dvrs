@@ -140,6 +140,7 @@ public class GenerateBlankCardRecipients {
                 map.put("nrccode", "");
                 map.put("nrctype", "");
                 map.put("nrcno", "");
+                map.put("occupation", "");
                 QRYData data = new QRYData();
                 data.setCid(serial);
                 // if (pi.get("centerid").equals("YGN1")) {
