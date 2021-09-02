@@ -95,12 +95,14 @@ public class CommonConstants {
         public static List<String> DIVISIONS = Arrays.asList("ကချင်ပြည်နယ်", "ကယားပြည်နယ်", "ကရင်ပြည်နယ်",
                         "ချင်းပြည်နယ်", "စစ်ကိုင်းတိုင်းဒေသကြီး", "တနင်္သာရီတိုင်းဒေသကြီး", "ပဲခူးတိုင်းဒေသကြီး",
                         "မကွေးတိုင်းဒေသကြီး", "မန္တလေးတိုင်းဒေသကြီး", "မွန်ပြည်နယ်", "ရခိုင်ပြည်နယ်",
-                        "ရန်ကုန်တိုင်းဒေသကြီး", "ဧရာဝတီတိုင်းဒေသကြီး", "နေပြည်တော်");
+                        "ရန်ကုန်တိုင်းဒေသကြီး", "ရှမ်းပြည်နယ်_အရှေ့ပိုင်း", "ရှမ်းပြည်နယ်_တောင်ပိုင်း",
+                        "ရှမ်းပြည်နယ်_မြောက်ပိုင်း", "ဧရာဝတီတိုင်းဒေသကြီး", "နေပြည်တော်");
 
         public static String getAddressJson() {
                 List<String> datalist = new ArrayList<>();
                 datalist.addAll(AddressConstant1.ADDRESS_DATA);
                 datalist.addAll(AddressConstant2.ADDRESS_DATA);
+                // datalist.addAll(AddressConstant3.ADDRESS_DATA);
                 return String.join("},", datalist);
         }
 
