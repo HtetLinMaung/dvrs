@@ -20,6 +20,10 @@ update [dbo].[ProformaInvoice] set qty = 15000, balance = 14969 where pirefnumbe
 select qty, balance, voidcount from [dbo].[ProformaInvoice] where pirefnumber = 'PI000096'
 
 
+-- nodosecount report
+select partnerid, partnername, firstdosedate, count(cid) as nodosecount from [dbo].[Recipients] as r 
+left join [dbo].[Partners] as p on r.partnersyskey = p.syskey 
+where dose = 0 and firstdosedate in ('23/08/2021', '24/08/2021', '25/08/2021', '26/08/2021', '27/08/2021', '28/08/2021', '29/08/2021', '30/08/2021', '31/08/2021', '01/09/2021', '02/09/2021', '03/09/2021') group by partnerid, partnername, firstdosedate order by firstdosedate
 
 
 

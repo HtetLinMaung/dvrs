@@ -276,7 +276,7 @@ public class VerifyBatchV2 {
                                     nric += "(" + nrctype + ")";
                                 }
 
-                                if (!nrcno.trim().matches("^[0-9\\u1040-\\u1049]{6}$")) {
+                                if (!nrcno.trim().matches("^[0-9\\u1040-\\u1049]{5,6}$")) {
                                     isValid = false;
                                     descriptionlist.add(headerDesc.get("nrcno") + " is invalid!");
                                     Map<String, Object> keyData = new HashMap<>();
