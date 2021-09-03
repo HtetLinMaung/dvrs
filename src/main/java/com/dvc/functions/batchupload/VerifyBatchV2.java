@@ -288,7 +288,7 @@ public class VerifyBatchV2 {
                             }
 
                             String mobilephone = (String) m.get("mobilephone");
-                            if (!ValidateBatchUtils.isPhoneValid(mobilephone.trim())) {
+                            if (!mobilephone.trim().isEmpty() && !ValidateBatchUtils.isPhoneValid(mobilephone.trim())) {
                                 isValid = false;
                                 descriptionlist.add(
                                         headerDesc.get("mobilephone") + " must be 09/+959/+95 followed by 7-11 digits");
