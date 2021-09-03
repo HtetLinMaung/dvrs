@@ -197,7 +197,8 @@ public class VerifyBatchV2 {
                             String occupation = (String) m.get("occupation");
                             occupation = occupation.split("\\.")[0].trim();
                             m.put("occupation", occupation);
-                            if (Integer.parseInt(occupation) < 1 || Integer.parseInt(occupation) > 23) {
+                            if (occupation.isEmpty() || Integer.parseInt(occupation) < 1
+                                    || Integer.parseInt(occupation) > 23) {
                                 isValid = false;
                                 descriptionlist.add(headerDesc.get("occupation") + " is invalid!");
                                 Map<String, Object> keyData = new HashMap<>();

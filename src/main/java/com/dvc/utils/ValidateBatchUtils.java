@@ -252,6 +252,7 @@ public class ValidateBatchUtils {
     public static String normalizePhone(String phone) {
         String p = phone.replaceAll("/", ",").split(",")[0].replaceAll("-", "").replaceAll("\\s", "")
                 .replaceAll("_", "").replaceAll("\\+", "").replaceAll("\\.", "");
+                
         if (p.startsWith("959")) {
             return p.replaceAll("^959", "09");
         } else if (p.startsWith("9")) {
