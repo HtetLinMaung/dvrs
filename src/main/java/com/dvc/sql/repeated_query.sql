@@ -58,6 +58,18 @@ select count(r.cid), partnersyskey from Recipients group by partnersyskey
 
 select p.partnername,sum(validcount), p.partnersyskey from [dbo].[BatchUpload] as b left join [dbo].[Partners] as p on p.syskey = b.partnersyskey group by b.partnersyskey, p.partnername
 
-select s1.partnername, s1.totalvalid, s2.totalrecipients from (select p.partnername, sum(validcount) as totalvalid, b.partnersyskey 
-from [dbo].[BatchUpload] as b left join [dbo].[Partners] as p on 
-p.syskey = b.partnersyskey where b.recordstatus >= 30 group by b.partnersyskey, p.partnername) as s1 left join (select count(cid) as totalrecipients, partnersyskey from Recipients group by partnersyskey) as s2 on s1.partnersyskey = s2.partnersyskey where s1.totalvalid <> s2.totalrecipients
+-- select s1.partnername, s1.totalvalid, s2.totalrecipients from (select p.partnername, sum(validcount) as totalvalid, b.partnersyskey 
+-- from [dbo].[BatchUpload] as b left join [dbo].[Partners] as p on 
+-- p.syskey = b.partnersyskey where b.recordstatus >= 30 group by b.partnersyskey, p.partnername) as s1 left join (select count(cid) as totalrecipients, partnersyskey from Recipients group by partnersyskey) as s2 on s1.partnersyskey = s2.partnersyskey where s1.totalvalid <> s2.totalrecipients
+
+
+
+select r.centerid, c.centername, count(r.cid) as cards, max(cid) as cid, sum(dose) as doses from [dbo].[Recipients] as r left join [dbo].[Centers] as c 
+on c.centerid = r.centerid group by r.centerid, c.centername
+
+
+
+select centerid, count(cid) as voidcount from [dbo].[Recipients] where voidstatus = 0 group by centerid
+
+select s1.centerid, s1.centername, s1.cards, s1.cid, s1.doses, s2.voidcount from (select r.centerid, c.centername, count(r.cid) as cards, max(cid) as cid, sum(dose) as doses from [dbo].[Recipients] as r left join [dbo].[Centers] as c 
+on c.centerid = r.centerid group by r.centerid, c.centername) as s1 left join (select centerid, count(cid) as voidcount from [dbo].[Recipients] where voidstatus = 0 group by centerid) as s2 on s1.centerid = s2.centerid
