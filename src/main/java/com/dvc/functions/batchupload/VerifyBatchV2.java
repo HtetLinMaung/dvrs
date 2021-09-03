@@ -101,8 +101,15 @@ public class VerifyBatchV2 {
             final String now = Instant.now().toString();
 
             String url = batch.get("fileurl") + "?" + AzureBlobUtils.getSasToken();
+            boolean isOldFormat = false;
             Map<String, String> headerDesc = ExcelUtil.getExcelFirstRow(new URL(url).openStream(),
                     CommonConstants.HEADERS_MOHS);
+            List<String> headers = CommonConstants.HEADERS_MOHS;
+            if (!headerDesc.get("nrctype").contains("အမျိုးအစား")) {
+                isOldFormat = true;
+                headerDesc = ExcelUtil.getExcelFirstRow(new URL(url).openStream(), CommonConstants.HEADERS_MOHS_OLD);
+                headers = CommonConstants.HEADERS_MOHS_OLD;
+            }
 
             Workbook workbook = new XSSFWorkbook(new URL(url).openStream());
             Sheet sheet = workbook.getSheetAt(0);
@@ -118,7 +125,7 @@ public class VerifyBatchV2 {
                     Map<String, Object> map = new HashMap<>();
                     boolean isempty = true;
                     for (int cn = 0; cn < row.getLastCellNum(); cn++) {
-                        if (j > CommonConstants.HEADERS_MOHS.size()) {
+                        if (j > headers.size()) {
                             break;
                         }
                         Cell cell = row.getCell(cn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
@@ -127,19 +134,19 @@ public class VerifyBatchV2 {
                             if (!getCellValue(cell).isEmpty()) {
                                 isempty = false;
                             }
-                            if (j < CommonConstants.HEADERS_MOHS.size()) {
-                                map.put(CommonConstants.HEADERS_MOHS.get(j), getCellValue(cell, workbook));
+                            if (j < headers.size()) {
+                                map.put(headers.get(j), getCellValue(cell, workbook));
                             }
                         } catch (Exception e) {
                             System.out.println(e.getMessage());
-                            if (j < CommonConstants.HEADERS_MOHS.size()) {
-                                map.put(CommonConstants.HEADERS_MOHS.get(j), "");
+                            if (j < headers.size()) {
+                                map.put(headers.get(j), "");
                             }
                         }
                         j++;
                     }
-                    while (j < CommonConstants.HEADERS_MOHS.size()) {
-                        map.put(CommonConstants.HEADERS_MOHS.get(j), "");
+                    while (j < headers.size()) {
+                        map.put(headers.get(j), "");
                         j++;
                     }
                     if (!isempty) {
@@ -229,7 +236,10 @@ public class VerifyBatchV2 {
 
                             String prefixnrc = (String) m.get("prefixnrc");
                             String nrccode = (String) m.get("nrccode");
-                            String nrctype = (String) m.get("nrctype");
+                            String nrctype = "";
+                            if (!isOldFormat) {
+                                nrctype = (String) m.get("nrctype");
+                            }
                             String nrcno = (String) m.get("nrcno");
 
                             if (prefixnrc.trim().isEmpty() && nrccode.trim().isEmpty() && nrctype.trim().isEmpty()
@@ -264,7 +274,7 @@ public class VerifyBatchV2 {
                                     nric += "/" + nrccode;
                                 }
 
-                                if (!CommonConstants.NATIONALITY_CODES.contains(nrctype.trim())) {
+                                if (!isOldFormat && !CommonConstants.NATIONALITY_CODES.contains(nrctype.trim())) {
                                     isValid = false;
                                     descriptionlist.add(headerDesc.get("nrctype") + " is invalid!");
                                     Map<String, Object> keyData = new HashMap<>();

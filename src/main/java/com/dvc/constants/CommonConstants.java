@@ -85,6 +85,9 @@ public class CommonConstants {
         public static List<String> HEADERS_MOHS = Arrays.asList("serialno", "recipientsname", "fathername", "dob",
                         "gender", "prefixnrc", "nrccode", "nrctype", "nrcno", "passport", "organization", "mobilephone",
                         "division", "township", "ward", "street", "occupation", "vaccinationcenter", "nationality");
+        public static List<String> HEADERS_MOHS_OLD = Arrays.asList("serialno", "recipientsname", "fathername", "dob",
+                        "gender", "prefixnrc", "nrccode", "nrcno", "passport", "organization", "mobilephone",
+                        "division", "township", "ward", "street", "occupation", "vaccinationcenter", "nationality");
 
         public static List<String> PREFIX_NRCS = Arrays.asList("ကချင်_၁", "ကယား_၂", "ကရင်_၃", "ချင်း_၄", "စစ်ကိုင်း_၅",
                         "တနင်္သာရီ_၆", "ပဲခူး_၇", "မကွေး_၈", "မန္တလေး_၉", "မွန်_၁၀", "ရခိုင်_၁၁", "ရန်ကုန်_၁၂",
