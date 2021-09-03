@@ -241,6 +241,7 @@ public class VerifyBatchV2 {
                                 nrctype = (String) m.get("nrctype");
                             }
                             String nrcno = (String) m.get("nrcno");
+                            nrcno = nrcno.split("\\.")[0];
 
                             if (prefixnrc.trim().isEmpty() && nrccode.trim().isEmpty() && nrctype.trim().isEmpty()
                                     && nrcno.trim().isEmpty()) {
