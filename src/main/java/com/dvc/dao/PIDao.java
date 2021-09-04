@@ -270,17 +270,27 @@ public class PIDao extends BaseDao implements IPIDao {
         return false;
     }
 
-    public Map<String, Object> getTotalQB(String partnersyskey) throws SQLException {
+    public Map<String, Object> getTotalQB(String partnersyskey, String centerid) throws SQLException {
         String sql = "select sum(qty) as totalqty, sum(balance + voidcount) as totalbalance from [dbo].[ProformaInvoice]";
-        if (!partnersyskey.isEmpty()) {
+        if (!partnersyskey.isEmpty() && !centerid.isEmpty()) {
+            sql += " where partnersyskey = ? and centerid = ?";
+        } else if (!partnersyskey.isEmpty()) {
             sql += " where partnersyskey = ?";
+        } else if (!centerid.isEmpty()) {
+            sql += " where centerid = ?";
         }
 
         try (Connection connection = DbFactory.getConnection();
                 PreparedStatement stmt = connection.prepareStatement(sql)) {
-            if (!partnersyskey.isEmpty()) {
+            if (!partnersyskey.isEmpty() && !centerid.isEmpty()) {
                 stmt.setString(1, partnersyskey);
+                stmt.setString(2, centerid);
+            } else if (!partnersyskey.isEmpty()) {
+                stmt.setString(1, partnersyskey);
+            } else if (!centerid.isEmpty()) {
+                stmt.setString(1, centerid);
             }
+
             ResultSet rs = stmt.executeQuery();
             Map<String, Object> data = new HashMap<>();
             while (rs.next()) {

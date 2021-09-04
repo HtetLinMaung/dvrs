@@ -50,7 +50,7 @@ public class GetPis {
             }
 
             PaginationResponse<Map<String, Object>> resData = new PIDao().getPis(dto);
-            Map<String, Object> totalData = new PIDao().getTotalQB(dto.getPartnersyskey());
+            Map<String, Object> totalData = new PIDao().getTotalQB(dto.getPartnersyskey(), dto.getCenterid());
             Map<String, Object> body = new EasyData<PaginationResponse<Map<String, Object>>>(resData).toMap();
             body.putAll(totalData);
             return request.createResponseBuilder(HttpStatus.OK).body(body).build();
