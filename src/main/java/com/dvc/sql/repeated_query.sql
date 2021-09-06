@@ -78,7 +78,7 @@ on c.centerid = r.centerid group by r.centerid, c.centername) as s1 left join (s
 
 
 
--- testing query
-select d1.cid, d1.doseupdatetime, d2.doseupdatetime from [dbo].[DoseRecords] as d1 
-left join [dbo].[DoseRecords] as d2 on d1.cid = d2.cid
- where d1.doseupdatetime <> d2.doseupdatetime and d1.cid = 'YGN10019088'
+-- testing first dose date and second dose date query
+select d1.cid, d1.doctor, d1.lot, d1.doseupdatetime, d2.doctor, d2.lot, d2.doseupdatetime from [dbo].[DoseRecords] as d1 
+left join [dbo].[DoseRecords] as d2 on d1.cid = d2.cid where d1.cid = 'YGN10042551' 
+and d1.doseupdatetime < d2.doseupdatetime
