@@ -135,7 +135,7 @@ public class VerifyBatchV2 {
                                 isempty = false;
                             }
                             if (j < headers.size()) {
-                                map.put(headers.get(j), getCellValue(cell, workbook));
+                                map.put(headers.get(j), getCellValue(cell, workbook, headers.get(j)));
                             }
                         } catch (Exception e) {
                             System.out.println(e.getMessage());
@@ -481,6 +481,31 @@ public class VerifyBatchV2 {
                 return cell.getStringCellValue();
             }
             // return Double.toString(cell.getNumericCellValue());
+        }
+    }
+
+    private static String getCellValue(Cell cell, Workbook workbook, String key) {
+        if (key.equals("township")) {
+            try {
+                if (cell.getCellType() != CellType.NUMERIC) {
+                    return cell.getStringCellValue();
+                } else if (cell.getCellType() == CellType.NUMERIC || cell.getCellType() == CellType.FORMULA) {
+                    if (DateUtil.isCellDateFormatted(cell)) {
+                        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                        Date date = cell.getDateCellValue();
+                        return df.format(date);
+                    }
+                }
+                return cell.getStringCellValue();
+            } catch (Exception e) {
+                try {
+                    return Double.toString(cell.getNumericCellValue());
+                } catch (Exception e2) {
+                    return cell.getStringCellValue();
+                }
+            }
+        } else {
+            return getCellValue(cell, workbook);
         }
     }
 

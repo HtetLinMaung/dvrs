@@ -14,7 +14,7 @@ on r.pisyskey = pi.syskey left join [dbo].[Centers] as c on c.centerid = pi.cent
 -- scan not update
 select r.cid, q.userid, q.verifyat, dose, recipientsname, fathername, nric, passport, nationality, dob, 
 township, address1, mobilephone from [dbo].[Recipients] as r left join [dbo].[QRLog] as q on 
-q.cid = r.cid where dose = 0 and DATEDIFF(day, verifyat, '2021/09/03') = 0 and (r.cid like 'YGN10%' or r.cid like 'YGN0%')
+q.cid = r.cid where dose = 0 and DATEDIFF(day, verifyat, '2021/09/04') = 0 and (r.cid like 'YGN10%' or r.cid like 'YGN0%')
 
 update [dbo].[ProformaInvoice] set qty = 15000, balance = 14969 where pirefnumber = 'PI000096'
 select qty, balance, voidcount from [dbo].[ProformaInvoice] where pirefnumber = 'PI000096'
@@ -73,3 +73,12 @@ select centerid, count(cid) as voidcount from [dbo].[Recipients] where voidstatu
 
 select s1.centerid, s1.centername, s1.cards, s1.cid, s1.doses, s2.voidcount from (select r.centerid, c.centername, count(r.cid) as cards, max(cid) as cid, sum(dose) as doses from [dbo].[Recipients] as r left join [dbo].[Centers] as c 
 on c.centerid = r.centerid group by r.centerid, c.centername) as s1 left join (select centerid, count(cid) as voidcount from [dbo].[Recipients] where voidstatus = 0 group by centerid) as s2 on s1.centerid = s2.centerid
+
+
+
+
+
+-- testing query
+select d1.cid, d1.doseupdatetime, d2.doseupdatetime from [dbo].[DoseRecords] as d1 
+left join [dbo].[DoseRecords] as d2 on d1.cid = d2.cid
+ where d1.doseupdatetime <> d2.doseupdatetime and d1.cid = 'YGN10019088'
