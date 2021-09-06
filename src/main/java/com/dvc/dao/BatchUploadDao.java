@@ -207,13 +207,14 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
     public void saveRecipents(BatchDto dto, ExecutionContext context) throws SQLException, IOException {
         final String now = Instant.now().toString();
 
-        int currentcount = getTotalCount("Recipients where pisyskey = ? and batchuploadsyskey <> 0",
-                Arrays.asList(dto.getPisyskey()));
+        // int currentcount = getTotalCount("Recipients where pisyskey = ? and
+        // batchuploadsyskey <> 0",
+        // Arrays.asList(dto.getPisyskey()));
 
         Map<String, Object> pi = new PIDao().getPi(Long.parseLong(dto.getPisyskey()));
-        int totalcount = Integer.parseInt((String) pi.get("qty"));
-
-        int remainingcount = totalcount - currentcount + Integer.parseInt((String) pi.get("voidcount"));
+        // int totalcount = Integer.parseInt((String) pi.get("qty"));
+        int balance = Integer.parseInt((String) pi.get("balance"));
+        int remainingcount = balance + Integer.parseInt((String) pi.get("voidcount"));
 
         // new CenterDao().addLastSerial((String) pi.get("centerid"),
         // Integer.parseInt((String) pi.get("qty")));
