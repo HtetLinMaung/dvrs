@@ -684,4 +684,116 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         data.put("recordstatus", 30);
         return getDBClient().updateOne("SubmittedRecipients", "syskey", data);
     }
+
+    public PaginationResponse<Map<String, Object>> getMohsRecipients(FilterDto dto) throws SQLException {
+        String sql = "select r.syskey, r.cid, rid, recipientsname, fathername, dob, age, nric, passport, nationality, organization, township, division, mobilephone, batchrefcode, partnername, partnerid, r.partnersyskey, voidstatus, dose, gender, address1, prefixnrc, nrccode, nrctype, nrcno, ward, street, occupation, isexported, vaccinationcenter from ";
+        String query = "Recipients as r left join Partners as p on p.syskey = r.partnersyskey where voidstatus = 1";
+
+        List<Object> args = new ArrayList<>();
+        if (dto.getRole().equals("Partner") || (dto.getRole().equals("Admin") && !dto.getPartnersyskey().isEmpty())) {
+            query += " and r.partnersyskey = ? ";
+            args.add(dto.getPartnersyskey());
+        }
+        query += getDoseCondition(dto);
+        if (!dto.getBatchuploadsyskey().isEmpty()) {
+            query += " and batchuploadsyskey = ? ";
+            args.add(dto.getBatchuploadsyskey());
+        }
+        if (!dto.getCenterid().isEmpty() && !dto.getStartcid().isEmpty() && !dto.getEndcid().isEmpty()) {
+            query += " and r.centerid = ? and r.cid between ? and ? ";
+            args.add(dto.getCenterid());
+            args.add(dto.getStartcid());
+            args.add(dto.getEndcid());
+        }
+
+        sql += query + " ORDER BY r.cid desc OFFSET ? ROWS FETCH FIRST ? ROWS ONLY";
+
+        List<Map<String, Object>> datalist = new ArrayList<>();
+
+        try (Connection connection = DbFactory.getConnection();
+                PreparedStatement stmt = connection.prepareStatement(sql);) {
+            int i = 1;
+            for (Object value : args) {
+                stmt.setObject(i++, value);
+            }
+            int offset = (dto.getCurrentpage() - 1) * dto.getPagesize();
+            stmt.setObject(i++, offset);
+            stmt.setObject(i++, dto.getPagesize());
+
+            ResultSet rs = stmt.executeQuery();
+            List<String> cidlist = new ArrayList<>();
+            while (rs.next()) {
+                cidlist.add("'" + rs.getString("cid") + "'");
+                Map<String, Object> map = new HashMap<>();
+                map.put("syskey", rs.getString("syskey"));
+                map.put("cid", rs.getString("cid"));
+                map.put("rid", rs.getString("rid"));
+                map.put("recipientsname", rs.getString("recipientsname"));
+                map.put("fathername", rs.getString("fathername"));
+                map.put("dob", rs.getString("dob"));
+                map.put("age", rs.getString("age"));
+                map.put("nric", rs.getString("nric"));
+                map.put("passport", rs.getString("passport"));
+                map.put("nationality", rs.getString("nationality"));
+                map.put("organization", rs.getString("organization"));
+                map.put("township", rs.getString("township"));
+                map.put("division", rs.getString("division"));
+                map.put("mobilephone", rs.getString("mobilephone"));
+                map.put("batchrefcode", rs.getString("batchrefcode"));
+                map.put("partnername", rs.getString("partnername"));
+                map.put("partnerid", rs.getString("partnerid"));
+                map.put("partnersyskey", rs.getString("partnersyskey"));
+                map.put("voidstatus", rs.getString("voidstatus"));
+                map.put("dose", rs.getString("dose"));
+                map.put("gender", rs.getString("gender"));
+                map.put("address1", rs.getString("address1"));
+                map.put("prefixnrc", rs.getString("prefixnrc"));
+                map.put("nrccode", rs.getString("nrccode"));
+                map.put("nrctype", rs.getString("nrctype"));
+                map.put("nrcno", rs.getString("nrcno"));
+                map.put("ward", rs.getString("ward"));
+                map.put("street", rs.getString("street"));
+                map.put("occupation", rs.getString("occupation"));
+                map.put("isexported", rs.getString("isexported"));
+                map.put("vaccinationcenter", rs.getString("vaccinationcenter"));
+                map.put("firstdosedate", "");
+                map.put("firstdosedoctor", "");
+                map.put("seconddosedate", "");
+                map.put("seconddosedoctor", "");
+                datalist.add(map);
+            }
+            if (!(dto.getOperator() == 0 && dto.getDosecount() == 0) || dto.isAlldose()) {
+                String detailsql = String.format(
+                        "select cid, doseupdatetime, lot, doctor, remark, userid from DoseRecords where cid in (%s) order by cid, doseupdatetime",
+                        String.join(", ", cidlist));
+                PreparedStatement detailstmt = connection.prepareStatement(detailsql);
+                ResultSet drs = detailstmt.executeQuery();
+                while (drs.next()) {
+                    for (Map<String, Object> data : datalist) {
+                        if (data.get("cid").equals(drs.getString("cid"))) {
+                            String firstdosedate = (String) data.get("firstdosedate");
+                            String seconddosedate = (String) data.get("seconddosedate");
+                            if (firstdosedate.isEmpty()) {
+                                data.put("firstdosedate", drs.getString("doseupdatetime"));
+                                data.put("firstdosedoctor", drs.getString("doctor"));
+                            } else if (seconddosedate.isEmpty()) {
+                                data.put("seconddosedate", drs.getString("doseupdatetime"));
+                                data.put("seconddosedoctor", drs.getString("doctor"));
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+        }
+        PaginationResponse<Map<String, Object>> res = new PaginationResponse<>();
+        int totalcount = getTotalCount(query, args);
+        res.setDatalist(datalist);
+        res.setPagesize(dto.getPagesize());
+        res.setCurrentpage(dto.getCurrentpage());
+        res.setPagecount((int) Math.ceil((double) totalcount / (double) dto.getPagesize()));
+        res.setTotalcount(totalcount);
+        return res;
+    }
 }

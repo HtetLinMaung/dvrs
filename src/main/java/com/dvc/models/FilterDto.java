@@ -6,7 +6,7 @@ public class FilterDto extends BaseDto {
     private String search;
     private String partnersyskey = "";
     private String centerid = "";
-    private String batchuploadsyskey;
+    private String batchuploadsyskey = "";
     private int detailstatus;
     private String role;
     private boolean all;
@@ -19,6 +19,25 @@ public class FilterDto extends BaseDto {
     private String recordstatus = "";
     private String doseupdatedate = "";
     private boolean reverse = true;
+
+    private String startcid = "";
+    private String endcid = "";
+
+    public String getStartcid() {
+        return startcid;
+    }
+
+    public void setStartcid(String startcid) {
+        this.startcid = startcid;
+    }
+
+    public String getEndcid() {
+        return endcid;
+    }
+
+    public void setEndcid(String endcid) {
+        this.endcid = endcid;
+    }
 
     public int getDosecount() {
         return dosecount;
