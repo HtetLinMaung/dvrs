@@ -119,7 +119,8 @@ public class ExportMohsReport {
                 }
                 datalist.add(data);
             }
-            dao.saveExported(resData.getDatalist(), dto.getGroupcode(), dto.getSubgroupcode());
+            // dao.saveExported(resData.getDatalist(), dto.getGroupcode(),
+            // dto.getSubgroupcode());
             ByteArrayOutputStream out = ExcelUtil.writeExcel(datalist, "Sheet1");
             String[] updatedate = dto.getDoseupdatedate().split("/");
             String selecteddate = "";
