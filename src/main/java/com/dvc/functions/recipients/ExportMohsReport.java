@@ -62,7 +62,9 @@ public class ExportMohsReport {
             if (dto.getRole().equals("Partner")) {
                 dto.setPartnersyskey(auth.getTokenData().getPartnersyskey());
             }
-            PaginationResponse<Map<String, Object>> resData = new RecipientsDao().getMohsRecipients(dto);
+            RecipientsDao dao = new RecipientsDao();
+            PaginationResponse<Map<String, Object>> resData = dao.getMohsRecipients(dto);
+
             List<LinkedHashMap<String, Object>> datalist = new ArrayList<>();
             int i = 1;
             for (Map<String, Object> m : resData.getDatalist()) {
@@ -117,7 +119,7 @@ public class ExportMohsReport {
                 }
                 datalist.add(data);
             }
-
+            dao.saveExported(resData.getDatalist(), dto.getGroupcode(), dto.getSubgroupcode());
             ByteArrayOutputStream out = ExcelUtil.writeExcel(datalist, "Sheet1");
             String[] updatedate = dto.getDoseupdatedate().split("/");
             String selecteddate = "";

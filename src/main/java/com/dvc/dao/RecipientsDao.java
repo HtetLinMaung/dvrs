@@ -686,7 +686,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
     }
 
     public PaginationResponse<Map<String, Object>> getMohsRecipients(FilterDto dto) throws SQLException {
-        String sql = "select r.syskey, r.cid, rid, recipientsname, fathername, dob, age, nric, passport, nationality, organization, township, division, mobilephone, batchrefcode, partnername, partnerid, r.partnersyskey, voidstatus, dose, gender, address1, prefixnrc, nrccode, nrctype, nrcno, ward, street, occupation, isexported, vaccinationcenter from ";
+        String sql = "select r.syskey, r.cid, rid, recipientsname, fathername, dob, age, nric, passport, nationality, organization, township, division, mobilephone, batchrefcode, partnername, partnerid, r.partnersyskey, voidstatus, dose, gender, address1, prefixnrc, nrccode, nrctype, nrcno, ward, street, occupation, isexported, vaccinationcenter, batchuploadsyskey, pisyskey, qrtoken, r.centerid from ";
         String query = "Recipients as r left join Partners as p on p.syskey = r.partnersyskey where voidstatus = 1";
 
         List<Object> args = new ArrayList<>();
@@ -809,11 +809,18 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
             m.put("subgroupcode", subgroupcode);
             m.put("createddate", now);
             m.put("modifieddate", now);
+            m.remove("firstdosedate");
+            m.remove("seconddosedate");
+            m.remove("firstdosedoctor");
+            m.remove("seconddosedoctor");
+            m.remove("partnerid");
+            m.remove("partnername");
+            m.remove("isexported");
             return m;
         }).collect(Collectors.toList()));
         if (datalist.size() > 0) {
-            final String sql = String.format("update Recipients set isexported = 1 where cid in (%s)",
-                    datalist.stream().map(m -> "'" + (String) m.get("cid") + "'").collect(Collectors.toList()));
+            final String sql = String.format("update Recipients set isexported = 1 where cid in (%s)", String.join(", ",
+                    datalist.stream().map(m -> "'" + (String) m.get("cid") + "'").collect(Collectors.toList())));
             try (Connection connection = DbFactory.getConnection();
                     PreparedStatement stmt = connection.prepareStatement(sql)) {
                 stmt.executeUpdate();
