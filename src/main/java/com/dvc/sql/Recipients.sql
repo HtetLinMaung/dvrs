@@ -46,6 +46,7 @@ create table Recipients (
     street nvarchar(255),
     vaccinationcenter nvarchar(255),
     groupid nvarchar(255),
+    isexported int default 0,
     t1 nvarchar(255),
     t2 nvarchar(255),
     t3 nvarchar(255),
