@@ -1,6 +1,7 @@
 package com.dvc.dao;
 
 import java.io.IOException;
+import java.nio.LongBuffer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -826,5 +827,31 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
                 stmt.executeUpdate();
             }
         }
+    }
+
+    public long saveMohsExcelFile(String groupcode, String subgroupcode) throws SQLException {
+        int count = getTotalCount("MohsExcelFiles where groupcode = ? and subgroupcode = ?",
+                Arrays.asList(groupcode, subgroupcode));
+        long syskey = 0;
+        if (count == 0) {
+            syskey = KeyGenerator.generateSyskey();
+            final String now = Instant.now().toString();
+            Map<String, Object> data = new HashMap<>();
+            data.put("syskey", syskey);
+            data.put("createddate", now);
+            data.put("modifieddate", now);
+            data.put("groupcode", groupcode);
+            data.put("subgroupcode", subgroupcode);
+            getDBClient().insertMany("MohsExcelFiles", Arrays.asList(data));
+        }
+        return syskey;
+    }
+
+    public int updateMohsExcelFile(long syskey, String filename) throws SQLException {
+        Map<String, Object> args = new HashMap<>();
+        args.put("syskey", syskey);
+        args.put("filename", filename);
+        args.put("recordstatus", 10);
+        return getDBClient().updateOne("MohsExcelFiles", "syskey", args);
     }
 }

@@ -63,6 +63,7 @@ public class ExportMohsReport {
                 dto.setPartnersyskey(auth.getTokenData().getPartnersyskey());
             }
             RecipientsDao dao = new RecipientsDao();
+            long excelsyskey = dao.saveMohsExcelFile(dto.getGroupcode(), dto.getSubgroupcode());
             PaginationResponse<Map<String, Object>> resData = dao.getMohsRecipients(dto);
 
             List<LinkedHashMap<String, Object>> datalist = new ArrayList<>();
@@ -130,8 +131,10 @@ public class ExportMohsReport {
             LocalDate lDate = LocalDate.now();
             String exporteddate = String.valueOf(lDate.getDayOfMonth()) + String.valueOf(lDate.getMonthValue())
                     + String.valueOf(lDate.getYear());
-            String url = AzureBlobUtils.createBlob(out,
-                    "MOHS_Report" + selecteddate + "_" + exporteddate + "-" + UUID.randomUUID().toString() + ".xls");
+            String filename = "MOHS_Report" + selecteddate + "_" + exporteddate + "-" + UUID.randomUUID().toString()
+                    + ".xls";
+            dao.updateMohsExcelFile(excelsyskey, filename);
+            String url = AzureBlobUtils.createBlob(out, filename);
             url += "?" + AzureBlobUtils.getSasToken();
             Map<String, Object> res = new EasyData<BaseResponse>(new BaseResponse()).toMap();
             res.put("url", url);
