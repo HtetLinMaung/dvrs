@@ -23,6 +23,25 @@ public class FilterDto extends BaseDto {
     private String startcid = "";
     private String endcid = "";
 
+    private String groupcode = "";
+    private String subgroupcode = "";
+
+    public String getGroupcode() {
+        return groupcode;
+    }
+
+    public void setGroupcode(String groupcode) {
+        this.groupcode = groupcode;
+    }
+
+    public String getSubgroupcode() {
+        return subgroupcode;
+    }
+
+    public void setSubgroupcode(String subgroupcode) {
+        this.subgroupcode = subgroupcode;
+    }
+
     public String getStartcid() {
         return startcid;
     }

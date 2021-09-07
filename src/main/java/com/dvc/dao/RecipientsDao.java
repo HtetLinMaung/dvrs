@@ -762,7 +762,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
                 map.put("seconddosedoctor", "");
                 datalist.add(map);
             }
-            if (!(dto.getOperator() == 0 && dto.getDosecount() == 0) || dto.isAlldose()) {
+            if (datalist.size() > 0 && (!(dto.getOperator() == 0 && dto.getDosecount() == 0) || dto.isAlldose())) {
                 String detailsql = String.format(
                         "select cid, doseupdatetime, lot, doctor, remark, userid from DoseRecords where cid in (%s) order by cid, doseupdatetime",
                         String.join(", ", cidlist));
@@ -795,5 +795,29 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         res.setPagecount((int) Math.ceil((double) totalcount / (double) dto.getPagesize()));
         res.setTotalcount(totalcount);
         return res;
+    }
+
+    public void saveExported(List<Map<String, Object>> datalist, String groupcode, String subgroupcode)
+            throws SQLException {
+        final String now = Instant.now().toString();
+        getDBClient().insertMany("ExportedRecipients", datalist.stream().map(m -> {
+            m.put("recipientsyskey", m.get("syskey"));
+            m.put("syskey", KeyGenerator.generateSyskey());
+            m.put("exporteddate", now);
+            m.put("exportstatus", m.get("dose"));
+            m.put("groupcode", groupcode);
+            m.put("subgroupcode", subgroupcode);
+            m.put("createddate", now);
+            m.put("modifieddate", now);
+            return m;
+        }).collect(Collectors.toList()));
+        if (datalist.size() > 0) {
+            final String sql = String.format("update Recipients set isexported = 1 where cid in (%s)",
+                    datalist.stream().map(m -> "'" + (String) m.get("cid") + "'").collect(Collectors.toList()));
+            try (Connection connection = DbFactory.getConnection();
+                    PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.executeUpdate();
+            }
+        }
     }
 }

@@ -59,11 +59,10 @@ public class ExportMohsReport {
             FilterDto dto = new ObjectMapper().readValue(request.getBody().get(), FilterDto.class);
 
             dto.setRole(auth.getTokenData().getRole());
-            String partnersyskey = auth.getTokenData().getPartnersyskey();
-            dto.setPartnersyskey(
-                    !auth.getTokenData().getRole().equals("Partner") ? dto.getPartnersyskey() : partnersyskey);
-            dto.setReverse(false);
-            PaginationResponse<Map<String, Object>> resData = new RecipientsDao().getRecipients(dto);
+            if (dto.getRole().equals("Partner")) {
+                dto.setPartnersyskey(auth.getTokenData().getPartnersyskey());
+            }
+            PaginationResponse<Map<String, Object>> resData = new RecipientsDao().getMohsRecipients(dto);
             List<LinkedHashMap<String, Object>> datalist = new ArrayList<>();
             int i = 1;
             for (Map<String, Object> m : resData.getDatalist()) {
@@ -86,23 +85,33 @@ public class ExportMohsReport {
                 data.put("နေရပ်လိပ်စာ (အပြည့်အစုံ)", m.get("street"));
                 data.put("အလုပ်အကိုင်", m.get("occupation"));
                 data.put("မှတ်ချက်(ဆေးထိုးနေရာ)", m.get("vaccinationcenter"));
-                data.put("Ref. Key", m.get("cid"));
-                data.put("Group Code", "");
-                data.put("Sub Group Code", "");
+                data.put("Ref. Key", m.get("syskey"));
+                data.put("Group Code", dto.getGroupcode());
+                data.put("Sub Group Code", dto.getSubgroupcode());
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                // Asia/Rangoon
+
                 sdf.setTimeZone(TimeZone.getTimeZone("Asia/Rangoon"));
                 try {
+                    String firstdosedate = (String) m.get("firstdosedate");
+                    String seconddosedate = (String) m.get("seconddosedate");
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
                     SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
                     parser.setTimeZone(TimeZone.getTimeZone("UTC"));
-                    Date parsed = parser.parse((String) m.get("doseupdatetime"));
-
-                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
-
-                    data.put("1st Dose Date", formatter.format(parsed) + " " + (String) m.get("userid"));
+                    data.put("1st Dose Date", "");
                     data.put("1st Dose Doctor", "");
                     data.put("2nd Dose Date", "");
                     data.put("2nd Dose Doctor", "");
+                    if (!firstdosedate.isEmpty()) {
+                        Date parsed = parser.parse(firstdosedate);
+                        data.put("1st Dose Date", formatter.format(parsed));
+                        data.put("1st Dose Doctor", m.get("firstdosedoctor"));
+                    }
+                    if (!seconddosedate.isEmpty()) {
+                        Date parsed = parser.parse(seconddosedate);
+                        data.put("2nd Dose Date", formatter.format(parsed));
+                        data.put("2nd Dose Doctor", m.get("firstdosedoctor"));
+                    }
+
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -119,8 +128,7 @@ public class ExportMohsReport {
             String exporteddate = String.valueOf(lDate.getDayOfMonth()) + String.valueOf(lDate.getMonthValue())
                     + String.valueOf(lDate.getYear());
             String url = AzureBlobUtils.createBlob(out,
-                    "Vaccinated_List_" + selecteddate + "_" + (dto.getCenterid().isEmpty() ? "all" : dto.getCenterid())
-                            + "_" + exporteddate + "-" + UUID.randomUUID().toString() + ".xls");
+                    "MOHS_Report" + selecteddate + "_" + exporteddate + "-" + UUID.randomUUID().toString() + ".xls");
             url += "?" + AzureBlobUtils.getSasToken();
             Map<String, Object> res = new EasyData<BaseResponse>(new BaseResponse()).toMap();
             res.put("url", url);
