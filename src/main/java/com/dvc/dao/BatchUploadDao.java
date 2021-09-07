@@ -940,4 +940,12 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
         }
         return false;
     }
+
+    public List<Map<String, Object>> getBatchCombos(String role, String partnersyskey) throws SQLException {
+        List<String> keys = Arrays.asList("batchrefcode", "syskey");
+        if (role.equals("Partner")) {
+            return getDBClient().getMany(keys, "BatchUpload where partnersyskey = ?", Arrays.asList(partnersyskey));
+        }
+        return getDBClient().getMany(keys, "BatchUpload");
+    }
 }
