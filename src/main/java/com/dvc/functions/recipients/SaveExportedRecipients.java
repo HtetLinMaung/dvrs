@@ -50,6 +50,7 @@ public class SaveExportedRecipients {
                 dto.setPartnersyskey(auth.getTokenData().getPartnersyskey());
             }
             RecipientsDao dao = new RecipientsDao();
+            dto.setContext(context);
             PaginationResponse<Map<String, Object>> resData = dao.getMohsRecipients(dto);
             dao.saveExported(resData.getDatalist(), dto.getGroupcode(), dto.getSubgroupcode());
             return request.createResponseBuilder(HttpStatus.OK).body(new BaseResponse()).build();

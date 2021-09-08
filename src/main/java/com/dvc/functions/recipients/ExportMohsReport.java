@@ -64,6 +64,7 @@ public class ExportMohsReport {
             }
             RecipientsDao dao = new RecipientsDao();
             long excelsyskey = dao.saveMohsExcelFile(dto.getGroupcode(), dto.getSubgroupcode());
+            dto.setContext(context);
             PaginationResponse<Map<String, Object>> resData = dao.getMohsRecipients(dto);
 
             List<LinkedHashMap<String, Object>> datalist = new ArrayList<>();

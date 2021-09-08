@@ -48,6 +48,7 @@ public class GetMohsRecipients {
             if (dto.getRole().equals("Partner")) {
                 dto.setPartnersyskey(auth.getTokenData().getPartnersyskey());
             }
+            dto.setContext(context);
             PaginationResponse<Map<String, Object>> resData = new RecipientsDao().getMohsRecipients(dto);
             return request.createResponseBuilder(HttpStatus.OK).body(resData).build();
         } catch (Exception e) {

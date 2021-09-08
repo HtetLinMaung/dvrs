@@ -762,6 +762,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
                 map.put("seconddosedate", "");
                 map.put("seconddosedoctor", "");
                 datalist.add(map);
+                dto.getContext().getLogger().info("Reading " + rs.getString("cid") + " finished");
             }
             if (datalist.size() > 0 && (!(dto.getOperator() == 0 && dto.getDosecount() == 0) || dto.isAlldose())) {
                 String detailsql = String.format(

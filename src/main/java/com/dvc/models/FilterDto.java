@@ -1,5 +1,7 @@
 package com.dvc.models;
 
+import com.microsoft.azure.functions.ExecutionContext;
+
 public class FilterDto extends BaseDto {
     private int pagesize;
     private int currentpage;
@@ -26,8 +28,18 @@ public class FilterDto extends BaseDto {
     private String groupcode = "";
     private String subgroupcode = "";
 
+    private ExecutionContext context;
+
     public String getGroupcode() {
         return groupcode;
+    }
+
+    public ExecutionContext getContext() {
+        return context;
+    }
+
+    public void setContext(ExecutionContext context) {
+        this.context = context;
     }
 
     public void setGroupcode(String groupcode) {
