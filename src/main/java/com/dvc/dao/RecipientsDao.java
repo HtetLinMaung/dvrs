@@ -854,4 +854,9 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
         args.put("recordstatus", 10);
         return getDBClient().updateOne("MohsExcelFiles", "syskey", args);
     }
+
+    public List<Map<String, Object>> getMohsExcel(String groupcode, String subgroupcode) throws SQLException {
+        return getDBClient().getMany(Arrays.asList("filename", "recordstatus"),
+                "MohsExcelFiles where groupcode = ? and subgroupcode = ?", Arrays.asList(groupcode, subgroupcode));
+    }
 }
