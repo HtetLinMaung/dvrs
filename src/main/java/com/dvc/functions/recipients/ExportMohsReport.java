@@ -76,9 +76,15 @@ public class ExportMohsReport {
                 data.put("အဘအမည် (မြန်မာ)", m.get("fathername"));
                 data.put("မွေးသက္ကရာဇ် (dd-MM-yyyy)", m.get("dob"));
                 data.put("ကျား/မ", m.get("gender"));
+                String prefixnrc = (String) m.get("prefixnrc") == null ? "" : (String) m.get("prefixnrc");
+                String nrccode = (String) m.get("nrccode") == null ? "" : (String) m.get("nrccode");
+                String nrctype = (String) m.get("nrctype") == null ? "" : (String) m.get("nrctype");
+                String nrcno = (String) m.get("nrcno") == null ? "" : (String) m.get("nrcno");
                 data.put("တိုင်း/ပြည်နယ် Code", m.get("prefixnrc"));
                 data.put("မြို့နယ် Code", m.get("nrccode"));
-                data.put("အမျိုးအစား", m.get("nrctype"));
+                if (!(!prefixnrc.isEmpty() && !nrccode.isEmpty() && nrctype.isEmpty() && !nrcno.isEmpty())) {
+                    data.put("အမျိုးအစား", m.get("nrctype"));
+                }
                 data.put("မှတ်ပုံတင်အမှတ်", m.get("nrcno"));
                 data.put("နိုင်ငံကူးလက်မှတ် အမှတ်(အင်္ဂလိပ်)", m.get("passport"));
                 data.put("ကုမ္ပဏီ/အဖွဲ့အစည်း (အင်္ဂလိပ်)", m.get("organization"));
