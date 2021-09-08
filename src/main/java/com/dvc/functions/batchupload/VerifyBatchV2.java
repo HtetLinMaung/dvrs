@@ -251,6 +251,8 @@ public class VerifyBatchV2 {
                                 String nric = "";
                                 if (prefixnrcarr.length == 2) {
                                     nric += prefixnrcarr[1];
+                                } else {
+                                    nric += prefixnrc;
                                 }
                                 boolean isPrefixNrc = CommonConstants.PREFIX_NRCS.contains(prefixnrc.trim());
                                 if (!isPrefixNrc) {

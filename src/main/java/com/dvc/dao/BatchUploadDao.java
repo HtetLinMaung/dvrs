@@ -948,6 +948,6 @@ public class BatchUploadDao extends BaseDao implements IBatchUploadDao {
                     "BatchUpload where partnersyskey = ? and voidstatus = 1 and recordstatus = 35",
                     Arrays.asList(partnersyskey));
         }
-        return getDBClient().getMany(keys, "BatchUpload");
+        return getDBClient().getMany(keys, "BatchUpload where voidstatus = 1 and recordstatus = 35");
     }
 }
