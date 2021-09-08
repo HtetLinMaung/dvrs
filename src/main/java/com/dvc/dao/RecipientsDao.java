@@ -842,6 +842,7 @@ public class RecipientsDao extends BaseDao implements IRecipientsDao {
             data.put("modifieddate", now);
             data.put("groupcode", groupcode);
             data.put("subgroupcode", subgroupcode);
+            data.put("filename", "");
             getDBClient().insertMany("MohsExcelFiles", Arrays.asList(data));
         }
         return syskey;
