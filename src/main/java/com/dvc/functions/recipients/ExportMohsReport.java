@@ -70,7 +70,7 @@ public class ExportMohsReport {
             int i = 1;
             for (Map<String, Object> m : resData.getDatalist()) {
                 LinkedHashMap<String, Object> data = new LinkedHashMap<>();
-                data.put("စဉ်", String.valueOf(i++));
+                data.put("စဉ်", String.valueOf(i));
                 data.put("အမည် (မြန်မာ)", m.get("recipientsname"));
                 data.put("အဘအမည် (မြန်မာ)", m.get("fathername"));
                 data.put("မွေးသက္ကရာဇ် (dd-MM-yyyy)", m.get("dob"));
@@ -116,9 +116,12 @@ public class ExportMohsReport {
                     }
 
                 } catch (ParseException e) {
+                    context.getLogger().severe(e.getMessage());
                     e.printStackTrace();
                 }
                 datalist.add(data);
+                context.getLogger().info(dto.getGroupcode() + "-" + dto.getSubgroupcode() + ": processing row "
+                        + String.valueOf(i++) + " finished");
             }
             // dao.saveExported(resData.getDatalist(), dto.getGroupcode(),
             // dto.getSubgroupcode());

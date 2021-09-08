@@ -82,3 +82,10 @@ on c.centerid = r.centerid group by r.centerid, c.centername) as s1 left join (s
 select d1.cid, d1.doctor, d1.lot, d1.doseupdatetime, d2.doctor, d2.lot, d2.doseupdatetime from [dbo].[DoseRecords] as d1 
 left join [dbo].[DoseRecords] as d2 on d1.cid = d2.cid where d1.cid = 'YGN10042551' 
 and d1.doseupdatetime < d2.doseupdatetime
+
+
+
+
+
+update [dbo].[DoseRecords] set doseupdatetime = '2021-08-27' where cid = 'YGN50010393'
+select cid, doseupdatetime from [dbo].[DoseRecords] where cid = 'YGN50010393'
