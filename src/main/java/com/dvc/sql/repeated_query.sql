@@ -89,3 +89,6 @@ and d1.doseupdatetime < d2.doseupdatetime
 
 update [dbo].[DoseRecords] set doseupdatetime = '2021-08-27' where cid = 'YGN50010393'
 select cid, doseupdatetime from [dbo].[DoseRecords] where cid = 'YGN50010393'
+
+
+select r.cid, doseupdatetime, recipientsname, fathername, nric, passport, nationality, gender, mobilephone, division, township from Recipients as r left join DoseRecords as d on d.cid = r.cid where dose >= 1 and voidstatus = 1 and centerid in ('YGN1', 'YGN')
