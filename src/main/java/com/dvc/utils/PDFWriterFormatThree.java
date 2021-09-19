@@ -106,9 +106,8 @@ public class PDFWriterFormatThree implements PDFWriter {
 			}
 
 			firstbodytable.addCell(new PDFUtil().writePDFCell("Name (အမည္)", lblFont, -1, -1, 0, -1f, 0, -1f));
-			firstbodytable.addCell(new PDFUtil().writePDFCell(
-					new PDFUtil().convertString(rdata.getRecipientsName(), "Myanmar3", "Zawgyi_One"), fontb, -1, -1, 0,
-					0.5f, 0, -1f));
+			firstbodytable.addCell(new PDFUtil().writePDFCell(new PDFUtil().uni2zg(rdata.getRecipientsName()), fontb,
+					-1, -1, 0, 0.5f, 0, -1f));
 			firstbodytable.addCell(
 					new PDFUtil().writePDFCell("Sex (က်ား/မ)", lblFont, -1, Element.ALIGN_RIGHT, 0, -1f, 0, -1f));
 			firstbodytable.addCell(
